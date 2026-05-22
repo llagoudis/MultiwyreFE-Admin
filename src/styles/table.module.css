@@ -1,0 +1,25 @@
+.tableRow:nth-child(even) {
+  background-color: #dddddd;
+}
+.tableRow {
+  /* overflow-x: scroll; */
+  text-align: left;
+}
+.tableData {
+  text-align: left;
+  padding: 1rem;
+}
+
+/* .tableHrow:last-child {
+  position: sticky;
+  top: 0;
+  right: 0;
+  background: #f0f3f7;
+} */
+/* .tableData:last-child {
+  position: sticky;
+  top: 0;
+  right: 0;
+  width: 1.5rem;
+  background: #f0f3f7;
+} */

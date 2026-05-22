@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: rgb(216, 216, 216);
+  border-radius: 40px;
+}
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+html {
+  font-family: "Segoe UI", Tahoma, Verdana, sans-serif !important;
+}
+
+[data-field="actions"] {
+  position: sticky;
+  right: 0;
+  background: #f0f3f7;
+  padding: 1rem 0;
+}
+
+[data-field="actions"] .MuiSvgIcon-root {
+  fill: #c3922e;
+}
+[data-field="actions"] .iconBlack {
+  fill: #000000;
+}
+
+/* Toggle B */
+input:checked ~ .dot {
+  transform: translateX(100%);
+  background-color: #1cbdab;
+}
+
+/* [aria-label="ACTIONS"][data-field="actions"] {
+  position: sticky !important;
+  background: #3089ff;
+  padding: 1rem 0;
+  width: 100%;
+} */
+
+/* Tabs */
+button[aria-selected="true"] {
+  color: #000000 !important;
+  font-weight: 600;
+}
+
+.eComProjectBalanceTabel .css-0 {
+  height: 75vh;
+}
+
+.eComProjectBalanceTabel [data-colindex="1"] {
+  position: sticky;
+  left: 0;
+  background: #ffffff;
+  z-index: 9999;
+}
+/* .eComProjectBalanceTabel [aria-colindex="2"] {
+  position: sticky;
+  left: 0;
+  background: #ffffff;
+  z-index: 9999;
+} */
+.eComProjectBalanceTabel .MuiDataGrid-row:hover [data-colindex="1"] {
+  background: #f2f2f2;
+}
+.eComProjectBalanceTabel .MuiDataGrid-row:nth-child(even) [data-colindex="1"] {
+  background: #f2f2f2;
+}
+
+/* .tox-notifications-container {
+  display: none !important;
+} */
+
+/* classnames  */
+@layer components {
+  /* text  */
+  .tableLink {
+    @apply font-semibold text-[#217EFD];
+  }
+
+  .pageHeader {
+    @apply text-2xl font-bold text-[#1E293B];
+  }
+
+  .subHeader {
+    @apply text-lg font-semibold text-[#4D515A];
+  }
+
+  .subText {
+    @apply break-all text-[16px] font-medium text-[#4D515A];
+  }
+
+  .textLight {
+    @apply text-[#64748B];
+  }
+
+  /* button  */
+  .btn-solid {
+    @apply w-fit rounded-md bg-black px-4  py-2 text-sm font-semibold tracking-normal text-white hover:bg-slate-400 active:scale-95;
+  }
+
+  .btn-red-cancel {
+    @apply w-fit rounded-md bg-[#C50000] px-4  py-2 text-sm font-semibold tracking-normal text-white hover:bg-slate-400 active:scale-95;
+  }
+
+  .btn-org-pending {
+    @apply w-fit rounded-md bg-[#D99C00] px-4  py-2 text-sm font-semibold tracking-normal text-white hover:bg-slate-400 active:scale-95;
+  }
+
+  .btn-green-completed {
+    @apply w-fit rounded-md bg-[#0D884D] px-4  py-2 text-sm font-semibold tracking-normal text-white hover:bg-slate-400 active:scale-95;
+  }
+
+  .btn-disable {
+    @apply w-fit rounded border border-[#F1F2F4] bg-white px-4 py-2 font-semibold tracking-normal text-[#B4BFCD] active:scale-95;
+  }
+
+  .btn-outlined {
+    @apply w-fit rounded border border-[#181818] bg-white px-4 py-[5px]  font-semibold  tracking-normal text-black active:scale-95;
+  }
+
+  .btn-danger {
+    @apply w-fit rounded bg-[#FF0000] px-4  py-2  font-semibold tracking-normal text-white active:scale-95;
+  }
+}
