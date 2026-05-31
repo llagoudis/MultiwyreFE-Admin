@@ -412,8 +412,8 @@ const Sidebar: React.FC = () => {
           !sidebarprop?.open ? " w-60" : "w-full md:w-0"
         } hidden h-screen  border-r bg-black text-white duration-500 md:block sidebar-container`}
       >
-        <div className="flex min-h-screen flex-col justify-between">
-          <div className="flex flex-col gap-5 pt-3">
+   <div className="flex h-full flex-col bg-white">
+      <div className="logo relative flex h-[70px] items-center justify-center bg-[#4775F2] text-white overflow-hidden flex-shrink-0">
             {admin?.profileImgLink && (
               <div className="logo relative flex h-[10vh] items-center justify-center text-white">
                 <Image
