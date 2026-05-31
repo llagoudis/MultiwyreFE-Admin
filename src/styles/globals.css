@@ -22,10 +22,6 @@ input::-webkit-inner-spin-button {
 :root {
   --primary-gradient: linear-gradient(90deg, #4775F2 27.54%, #DB33A1 100%);
 }
-button .btn-solid{
-    background: var(--primary-gradient) !important;
-
-}
 .bg-primary-gradient {
   background: var(--primary-gradient);
 }
@@ -122,7 +118,7 @@ button[aria-selected="true"] {
 
   /* button  */
   .btn-solid {
-    @apply w-fit rounded-md bg-black px-4  py-2 text-sm font-semibold tracking-normal text-white hover:bg-slate-400 active:scale-95;
+    @apply w-fit rounded-md     background: var(--primary-gradient) !important px-4  py-2 text-sm font-semibold tracking-normal text-white hover:bg-slate-400 active:scale-95;
   }
 
   .btn-red-cancel {
