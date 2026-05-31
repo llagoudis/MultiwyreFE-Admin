@@ -58,6 +58,11 @@ input:checked ~ .dot {
   --primary-gradient: linear-gradient(90deg, #4775F2 27.54%, #DB33A1 100%);
 }
 
+
+.bg-primary-gradient {
+  background: var(--primary-gradient);
+}
+
 /* Tabs */
 button[aria-selected="true"] {
   color: #000000 !important;
