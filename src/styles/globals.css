@@ -22,7 +22,10 @@ input::-webkit-inner-spin-button {
 :root {
   --primary-gradient: linear-gradient(90deg, #4775F2 27.54%, #DB33A1 100%);
 }
+button {
+    background: var(--primary-gradient) !important;
 
+}
 .bg-primary-gradient {
   background: var(--primary-gradient);
 }
