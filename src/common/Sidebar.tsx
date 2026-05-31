@@ -415,7 +415,7 @@ const Sidebar: React.FC = () => {
         <div className="flex min-h-screen flex-col justify-between">
           <div className="flex flex-col gap-5 pt-3">
             {admin?.profileImgLink && (
-              <div className="logo relative flex h-[10vh] items-center justify-center text-white">
+              <div className="logo relative flex h-[10vh] items-center justify-center bg-primary-gradient">
                 <Image
                   alt={"Profile"}
                   className="h-auto w-[100px] object-cover"
