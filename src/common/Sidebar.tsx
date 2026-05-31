@@ -413,7 +413,7 @@ const Sidebar: React.FC = () => {
         } hidden h-screen  border-r bg-black text-white duration-500 md:block sidebar-container`}
       >
         <div className="flex min-h-screen flex-col justify-between">
-          <div className="flex flex-col gap-5 pt-3 bg-[#4775F2]">
+          <div className="h-16 w-100 bg-[#4775F2]">
             {admin?.profileImgLink && (
               <div className="logo relative flex h-16 items-center justify-center">
                 <Image
