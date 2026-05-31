@@ -97,7 +97,7 @@ const Topbar: React.FC = () => {
       className="bg-primary-gradient bg-white"
     >
       <div
-        className={`m-auto flex h-16 w-[95%] items-center justify-between bg-white `}
+        className={`m-auto flex h-16 w-[95%] items-center justify-between text-white`}
       >
         <div className="flex items-center gap-8">
           <Image
