@@ -19,7 +19,13 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+:root {
+  --primary-gradient: linear-gradient(90deg, #4775F2 27.54%, #DB33A1 100%);
+}
 
+.bg-primary-gradient {
+  background: var(--primary-gradient);
+}
 /* Firefox */
 input[type="number"] {
   -moz-appearance: textfield;

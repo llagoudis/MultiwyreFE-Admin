@@ -431,7 +431,7 @@ const Sidebar: React.FC = () => {
             )}
 
             <div
-              className={`flex flex-col justify-center gap-3 px-3 capitalize ${
+              className={`flex flex-col justify-center gap-3 px-3 p-4 capitalize ${
                 sidebarprop?.open && "opacity-0"
               }`}
             >
