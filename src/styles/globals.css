@@ -54,6 +54,9 @@ input:checked ~ .dot {
   padding: 1rem 0;
   width: 100%;
 } */
+:root {
+  --primary-gradient: linear-gradient(90deg, #4775F2 27.54%, #DB33A1 100%);
+}
 
 /* Tabs */
 button[aria-selected="true"] {
