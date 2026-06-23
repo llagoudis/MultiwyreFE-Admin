@@ -43,7 +43,7 @@ const SweepTransactions = () => {
     {
       minWidth: 200,
       field: "firstname",
-      headerName: "CLIENT NAME",
+      headerName: "COMPANY NAME",
       renderCell: ({ row }: TableRow) => (
         <Link
           href={`/banking/companies/view/${row?.Merchant?.User?.companyProfileId}`}

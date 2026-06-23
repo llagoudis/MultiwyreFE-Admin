@@ -143,14 +143,6 @@ const EcommerceTransactions = () => {
     },
 
     {
-      minWidth: 300,
-      field: "account",
-      headerName: "ACCOUNT",
-      renderCell: ({ row }: TableRow) => (
-        <span>{row?.fromAddress ?? "---"}</span>
-      ),
-    },
-    {
       field: "status",
       headerName: "TRANSACTION STATUS",
       hidden: true,

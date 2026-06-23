@@ -63,24 +63,12 @@ const EcommerceTransactions = () => {
       headerName: "TRANSACTION ID",
     },
 
-    {
-      field: "customerId",
-      headerName: "CUSTOMER ID",
-      hidden: true,
-      minWidth: 200,
-      valueGetter: ({ row }: TableRow) => row?.customerId,
-      renderCell: ({ row }: TableRow) => (
-        <span
-          style={{ whiteSpace: "normal", wordBreak: "break-all" }}
-        >{`${row?.customerId ? `${row?.customerId}` : "---"} `}</span>
-      ),
-    },
 
     {
       minWidth: 200,
       field: "firstname",
       valueGetter: ({ row }: TableRow) => row?.firstname,
-      headerName: "USER",
+      headerName: "COMPANY NAME",
       renderCell: ({ row }: TableRow) => (
         <Link
           href={`/banking/companies/view/${row?.Merchant?.User?.companyProfileId}`}
@@ -117,7 +105,7 @@ const EcommerceTransactions = () => {
     {
       minWidth: 300,
       field: "transactionHash",
-      headerName: "TRANSACTION ID",
+      headerName: "TRANSACTION HASH",
       renderCell: ({ row }: TableRow) => (
         <span
           style={{ whiteSpace: "normal", wordBreak: "break-all" }}
