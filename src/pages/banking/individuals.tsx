@@ -119,13 +119,6 @@ const Persons = () => {
       ),
     },
     {
-      field: "email",
-      headerName: "EMAILS",
-      width: 200,
-      flex: 1,
-      minWidth: 200,
-    },
-    {
       minWidth: 180,
       field: "isUserVerified",
       type: "singleSelect",
@@ -139,24 +132,11 @@ const Persons = () => {
       ),
     },
     {
-      minWidth: 150,
-      field: "active",
-      valueGetter: (params: { row: any }) =>
-        params?.row?.active ? "Approved" : "Not",
-
-      headerName: "ACCOUNT STATUS",
-      type: "singleSelect",
-      valueOptions: ["Approved", "Not Approved"],
+      field: "email",
+      headerName: "EMAIL",
+      width: 200,
       flex: 1,
-      renderCell: ({ row }: TableRow) => (
-        <p>
-          {row?.active ? (
-            <span className="font-bold text-[#1CBDAB]">Approved</span>
-          ) : (
-            <span className="font-bold text-[#FF0000]">Not Approved</span>
-          )}
-        </p>
-      ),
+      minWidth: 200,
     },
 
     {
@@ -181,7 +161,7 @@ const Persons = () => {
     {
       field: "actions",
       type: "actions",
-      headerName: "ACTION",
+      headerName: "ACTIONS",
       width: 80,
       getActions: ({ row }: TableRow) => [
         <GridActionsCellItem
@@ -213,25 +193,6 @@ const Persons = () => {
             borderBottom: "1px solid #E1DCDC",
             width: "6rem",
             fontSize: "14px",
-          }}
-          showInMenu
-        />,
-        <GridActionsCellItem
-          key="delete"
-          label="Delete"
-          onClick={() => {
-            enforcePermission("delete", [
-              () => setDeleteAzureId(row?.azureId),
-              () => setOpenDialog("delete"),
-            ]);
-          }}
-          sx={{
-            margin: "0 1rem",
-            padding: "5px 0",
-
-            width: "6rem",
-            fontSize: "14px",
-            color: "#ff0000",
           }}
           showInMenu
         />,

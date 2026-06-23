@@ -155,14 +155,6 @@ const Companies = () => {
       ),
     },
 
-    {
-      flex: 1,
-      minWidth: 150,
-      field: "accountStatus",
-      headerName: "ACCOUNT STATUS",
-      type: "singleSelect",
-      valueOptions: ["Active", "Suspended"],
-    },
     { flex: 1, minWidth: 250, field: "companyEmail", headerName: "EMAIL" },
     {
       flex: 1,

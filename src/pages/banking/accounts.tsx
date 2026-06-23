@@ -76,7 +76,7 @@ const Accounts = () => {
       valueGetter: (params: { row: any }) =>
         params?.row?.User?.firstname + " " + params?.row?.User?.lastname,
       field: "holder",
-      headerName: "HOLDER",
+      headerName: "FULL NAME",
       renderCell: (params: { row: any }) => (
         <span>{`${params?.row?.User?.firstname ?? ""} ${
           params?.row?.User?.lastname ?? ""
@@ -118,14 +118,6 @@ const Accounts = () => {
       renderCell: (params: { row: any }) => (
         <span>{params?.row?.User?.active ? "ACTIVE" : "INACTIVE"}</span>
       ),
-    },
-    {
-      flex: 1,
-      minWidth: 150,
-      field: "Provider_name",
-      valueGetter: (params: { row: any }) => "Fireblocks",
-      headerName: "PROVIDER NAME",
-      renderCell: () => <span>Fireblocks</span>,
     },
 
     {

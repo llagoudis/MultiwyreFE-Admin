@@ -56,12 +56,6 @@ const AllTransactions = () => {
       ),
     },
     {
-      field: "note",
-      headerName: "NOTE",
-      hidden: true,
-      minWidth: 200,
-    },
-    {
       field: "sourceAddress",
       headerName: "SENDER ACCOUNT",
       minWidth: 350,
