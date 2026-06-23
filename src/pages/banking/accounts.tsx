@@ -36,7 +36,7 @@ const Accounts = () => {
   const intialSort = { field: "createdAt", sort: "DESC" };
   const [sort, setSort] = useState(intialSort);
   const [pagination, setPagination] = useState<DatagridPage>({
-    pageSize: 10,
+    pageSize: 25,
     page: 0,
   });
   const [filterModel, setFilterModel] = useState<GridFilterModel>({
@@ -392,7 +392,7 @@ const Accounts = () => {
             onFilterModelChange={onFilterChange}
             onSortModelChange={onSortChange}
             filterModel={filterModel}
-            pageSizeOptions={[10]}
+            pageSizeOptions={[25, 50, 100]}
             paginationModel={pagination}
             onPaginationModelChange={setPagination}
           />

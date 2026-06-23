@@ -117,7 +117,7 @@ const AllTransactions = () => {
   const [balances, setBalances] = useState<UserAssets[]>([]);
 
   const [pagination, setPagination] = useState<DatagridPage>({
-    pageSize: 10,
+    pageSize: 25,
     page: 0,
   });
   const [loading, setLoading] = useState(false);
@@ -423,7 +423,7 @@ const AllTransactions = () => {
         onFilterModelChange={onFilterChange}
         storageName={"Balances"}
         onSortModelChange={onSortChange}
-        pageSizeOptions={[10]}
+        pageSizeOptions={[25, 50, 100]}
         paginationModel={pagination}
         onPaginationModelChange={setPagination}
       />

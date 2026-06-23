@@ -284,7 +284,7 @@ const AllTransactions = () => {
         // paginationModel={pagination}
         initialState={{
           pagination: {
-            paginationModel: { pageSize: 10 },
+            paginationModel: { pageSize: 25 },
           },
           // sorting: {
           //   sortModel: [{ field: "id", sort: "desc" }],
@@ -294,7 +294,7 @@ const AllTransactions = () => {
           toolbar: { csvOptions: { fileName: "Total Fees Report" } },
         }}
         // rowCount={500}
-        pageSizeOptions={[10, 20, 30]}
+        pageSizeOptions={[25, 50, 100]}
       />
     </ReportTabsLayout>
   );

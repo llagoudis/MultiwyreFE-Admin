@@ -35,7 +35,7 @@ const Acquirers = () => {
   const [paymentMethods] = useAsyncMasterStore("paymentMethods");
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState<DatagridPage>({
-    pageSize: 10,
+    pageSize: 25,
     page: 0,
   });
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -292,7 +292,7 @@ const Acquirers = () => {
             storageName={"Acquirers"}
             getRowId={(row) => row?.id}
             onSortModelChange={onSortChange}
-            pageSizeOptions={[10]}
+            pageSizeOptions={[25, 50, 100]}
             paginationModel={pagination}
             onPaginationModelChange={setPagination}
           />

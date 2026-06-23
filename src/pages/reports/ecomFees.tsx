@@ -258,13 +258,13 @@ const AllTransactions = () => {
         storageName="Fees"
         initialState={{
           pagination: {
-            paginationModel: { pageSize: 10 },
+            paginationModel: { pageSize: 25 },
           },
         }}
         slotProps={{
           toolbar: { csvOptions: { fileName: "Total Fees Report" } },
         }}
-        pageSizeOptions={[10, 20, 30]}
+        pageSizeOptions={[25, 50, 100]}
       />
     </EcomReportTabsLayout>
   );
