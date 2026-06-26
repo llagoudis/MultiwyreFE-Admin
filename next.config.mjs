@@ -24,7 +24,7 @@ const config = {
   },
   images: {
     remotePatterns: [
-     { hostname: "image.zil.ink"},{hostname:"i.ibb.co"}, {hostname:"backend.multiwyre.com"}],
+     { hostname: "image.zil.ink"}],
   },
   output: "standalone",
 };
