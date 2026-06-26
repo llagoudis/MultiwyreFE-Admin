@@ -94,10 +94,10 @@ const Topbar: React.FC = () => {
       style={{
         boxShadow: "1.1802083253860474px 0px 5.901041507720947px 0px #0000000D",
       }}
-      className=" bg-white"
+      className="bg-primary-gradient"
     >
       <div
-        className={`m-auto flex h-16 w-[95%] items-center justify-between bg-white `}
+        className={`m-auto flex h-16 w-[95%] items-center justify-between text-white`}
       >
         <div className="flex items-center gap-8">
           <Image

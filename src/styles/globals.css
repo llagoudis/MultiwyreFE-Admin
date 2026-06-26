@@ -19,7 +19,12 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-
+:root {
+  --primary-gradient: linear-gradient(90deg, #4775F2 27.54%, #DB33A1 100%);
+}
+.bg-primary-gradient {
+  background: var(--primary-gradient);
+}
 /* Firefox */
 input[type="number"] {
   -moz-appearance: textfield;
@@ -113,7 +118,8 @@ button[aria-selected="true"] {
 
   /* button  */
   .btn-solid {
-    @apply w-fit rounded-md bg-black px-4  py-2 text-sm font-semibold tracking-normal text-white hover:bg-slate-400 active:scale-95;
+    @apply w-fit rounded-md  px-4  py-2 text-sm font-semibold tracking-normal text-white hover:bg-slate-400 active:scale-95;
+       background: var(--primary-gradient) !important;
   }
 
   .btn-red-cancel {
@@ -139,4 +145,66 @@ button[aria-selected="true"] {
   .btn-danger {
     @apply w-fit rounded bg-[#FF0000] px-4  py-2  font-semibold tracking-normal text-white active:scale-95;
   }
+}
+
+/* Custom topbar and sidebar styles */
+/* Topbar gradient and border */
+.topbar-gradient {
+  background: linear-gradient(90deg, #4775F2 27.54%, #DB33A1 100%) !important;
+  border: 1px solid rgba(0, 0, 0, 0.09) !important;
+  border-radius: 0px !important;
+}
+
+/* Sidebar base: white background and black text */
+.sidebar-container {
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* Individual sidebar item: default state */
+.sidebar-item {
+  color: #000000 !important;
+  border-radius: 10px;
+  transition: all 200ms ease-in-out;
+}
+
+/* Hover and active state for sidebar items */
+.sidebar-item:hover,
+.sidebar-nested-item:hover
+{
+  background: linear-gradient(90deg, #4C7FFF 0%, #DB33A1 100%) !important;
+  color: #ffffff !important;
+  border-radius: 10px !important;
+}
+
+.sidebar-item.active,
+.sidebar-nested-item.active {
+  color: #000000 !important;
+  border-radius: 10px !important;
+}
+
+/* Make nested item text appear white when hovered */
+.sidebar-nested-item {
+  color: #000000 !important;
+  transition: all 200ms ease-in-out;
+  border-radius: 10px;
+  padding: 2px;
+}
+
+/* Ensure images/icons brighten on hover */
+.sidebar-item .sidebar-icon,
+.sidebar-nested-item .sidebar-icon {
+  transition: filter 200ms ease-in-out;
+}
+.sidebar-item:hover .sidebar-icon,
+.sidebar-nested-item:hover .sidebar-icon,
+.sidebar-item.active .sidebar-icon,
+.sidebar-nested-item.active .sidebar-icon {
+  filter: brightness(1.6) !important;
+}
+
+/* Mobile sidebar overrides */
+.mobile-sidebar {
+  background: #ffffff !important;
+  color: #000000 !important;
 }

@@ -328,7 +328,7 @@ const Sidebar: React.FC = () => {
   const SidebarItem = ({ name, path, icon, menu, subitems }: Route) => (
     <Link
       href={path ? path : pathName}
-      className={` ${
+      className={` sidebar-item ${
         heading === name && "rounded-xl bg-white/10"
       } flex cursor-pointer justify-between p-1 px-2`}
       onClick={(e) => {
@@ -347,13 +347,13 @@ const Sidebar: React.FC = () => {
         <Image
           alt=""
           src={icon}
-          className={`${
+          className={`sidebar-icon ${
             heading === name && "brightness-200"
           } h-5 w-5 group-hover:brightness-200`}
         />
         <h1
-          className={` text-[#8B8D91] group-hover:text-white  ${
-            heading === name && "text-white"
+          className={` text-[#8B8D91]  ${
+            heading === name 
           } `}
         >
           {name === "apipage" ? "Api" : name}
@@ -373,11 +373,11 @@ const Sidebar: React.FC = () => {
   );
 
   const SidebarNestedItem = ({ name, path }: subitemsType) => (
-    <Link href={path} className="group flex items-center gap-3 ">
+    <Link href={path} className="group flex items-center gap-3 sidebar-nested-item">
       <h1
-        className={`p-1 text-sm font-medium text-[#8B8D91] group-hover:text-white  ${
+        className={`p-1 text-sm font-medium text-[#8B8D91]   ${
           firstTwoPaths === path &&
-          "rounded-md bg-white/10  font-semibold text-white"
+          "rounded-md bg-white/10  font-semibold "
         }`}
       >
         {name}
@@ -398,7 +398,6 @@ const Sidebar: React.FC = () => {
 
   //     setAdminImage(res?.body[0]?.profileImgLink);
   //   }
-  // }
 
   useMemo(() => {
     if (router.pathname === "/") {
@@ -411,12 +410,12 @@ const Sidebar: React.FC = () => {
       <nav
         className={`${
           !sidebarprop?.open ? " w-60" : "w-full md:w-0"
-        } hidden h-screen  border-r bg-black text-white duration-500 md:block`}
+        } hidden h-screen  border-r bg-black  duration-500 md:block sidebar-container`}
       >
         <div className="flex min-h-screen flex-col justify-between">
-          <div className="flex flex-col gap-5 pt-3">
+          <div className="h-16 w-100 bg-[#4775F2]">
             {admin?.profileImgLink && (
-              <div className="logo relative flex h-[10vh] items-center justify-center text-white">
+              <div className="logo relative flex h-16 items-center justify-center">
                 <Image
                   alt={"Profile"}
                   className="h-auto w-[100px] object-cover"
@@ -432,7 +431,7 @@ const Sidebar: React.FC = () => {
             )}
 
             <div
-              className={`flex flex-col justify-center gap-3 px-3 capitalize ${
+              className={`flex flex-col justify-center gap-3 px-3 p-4 capitalize ${
                 sidebarprop?.open && "opacity-0"
               }`}
             >
@@ -475,7 +474,7 @@ const Sidebar: React.FC = () => {
                 className="group-hover:brightness-200"
               />
               <h1
-                className={`p-1 text-[#8B8D91] group-hover:text-white  
+                className={`p-1 text-[#8B8D91] 
           `}
               >
                 Logout
@@ -501,9 +500,9 @@ const Sidebar: React.FC = () => {
       <nav
         className={`fixed h-full  w-1/2 bg-black lg:w-[35vw] ${
           sidebarprop?.open ? "left-0" : "-left-full"
-        } top-0 z-50 block p-1 duration-500 md:hidden`}
+        } top-0 z-50 block p-1 duration-500 md:hidden mobile-sidebar`}
       >
-        <div className="logo relative flex h-[15vh] justify-end p-5 text-white">
+        <div className="logo relative flex h-[15vh] justify-end p-5 ">
           <RiCloseCircleLine
             onClick={sidebarprop?.handleSidebar}
             className="h-5 w-5 cursor-pointer"
@@ -511,7 +510,7 @@ const Sidebar: React.FC = () => {
         </div>
         <div className="flex flex-col gap-5">
           {sidebarprop?.open && admin && (
-            <div className="logo relative flex h-[10vh] items-center justify-center text-white">
+            <div className="logo relative flex h-[10vh] items-center justify-center ">
               <Image
                 alt={"Profile"}
                 className="h-auto w-[100px] object-cover"
@@ -570,7 +569,7 @@ const Sidebar: React.FC = () => {
                 className="group-hover:brightness-200"
               />
               <h1
-                className={`p-1 text-[#8B8D91] group-hover:text-white  
+                className={`p-1 text-[#8B8D91] 
           `}
               >
                 Logout
