@@ -79,7 +79,7 @@ const MerchantWallets = () => {
       minWidth: 200,
       field: "projectId",
       flex: 1,
-      headerName: "PROJECT ID",
+      headerName: "PROJECT",
       renderCell: ({ row }: TableRow) => (
         <p>{row?.Merchant?.projectName ?? "---"}</p>
       ),
