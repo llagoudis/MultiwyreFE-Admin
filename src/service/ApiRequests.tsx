@@ -371,6 +371,26 @@ export const merchantsTurnover = (params: FilterType) => {
   );
 };
 
+// E-Commerce Reports -> Project Fees.
+// Per project, per currency aggregation of fees. BACKEND TO IMPLEMENT.
+// Expected (read as res.body.data + res.body.pagination.totalItems):
+//   data: Array<{
+//     projectId: number; projectName: string; companyId: string;
+//     User: { firstname: string; lastname: string; companyProfileId: string };
+//     currency: string;     // e.g. "EUR" | "USDT" | "BTC"
+//     markupFee: string;    // total mark-up fee for project+currency
+//     networkFee: string;   // total network fee for project+currency
+//   }>
+// Aggregation: NETWORK FEE = sum of network fee across the project's
+// transactions; MARK-UP FEE = sum of (commission "received crypto" -
+// network fee), grouped by project + currency. Accepts the same
+// FilterType params (pageSize, pageNumber, fromDate, toDate, sort).
+export const fetchEcomProjectFees = (params: FilterType) => {
+  return ProtectedAxiosInstance.get(
+    `ecomtransaction/project-fees?${convertUrlParams(params)}`,
+  );
+};
+
 export const CheckoutMerchantsTurnover = (params: FilterType) => {
   return ProtectedAxiosInstance.get(
     `checkout-merchant/merchantsTurnover?${convertUrlParams(params)}`,

@@ -23,6 +23,7 @@ import CopyButton from "../../../assets/general/copyicon.svg";
 interface Merchant {
   projectId: number;
   projectName: string;
+  User?: User;
 }
 
 interface Project {
@@ -92,7 +93,13 @@ const CustomerWallets = () => {
       flex: 1,
       headerName: "COMPANY",
       renderCell: ({ row }: TableRow) => (
-        <p>{row?.Merchant?.projectName ?? "---"}</p>
+        <p>
+          {row?.Merchant?.User
+            ? `${row?.Merchant?.User?.firstname ?? ""} ${
+                row?.Merchant?.User?.lastname ?? ""
+              }`
+            : "---"}
+        </p>
       ),
     },
 

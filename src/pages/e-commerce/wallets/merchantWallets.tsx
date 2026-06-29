@@ -84,6 +84,21 @@ const MerchantWallets = () => {
         <p>{row?.Merchant?.projectName ?? "---"}</p>
       ),
     },
+    {
+      minWidth: 200,
+      field: "company",
+      flex: 1,
+      headerName: "COMPANY",
+      renderCell: ({ row }: TableRow) => (
+        <p>
+          {row?.Merchant?.User
+            ? `${row?.Merchant?.User?.firstname ?? ""} ${
+                row?.Merchant?.User?.lastname ?? ""
+              }`
+            : "---"}
+        </p>
+      ),
+    },
 
     {
       minWidth: 200,

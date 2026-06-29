@@ -11,9 +11,9 @@ const EcomReportTabsLayout = ({ children }: Props) => {
   const { pathname } = router;
 
   const [value, setValue] = React.useState(() => {
-    if (pathname === "/reports/ecomChargedFees") {
+    if (pathname === "/reports/merchantTurnover") {
       return 1;
-    } else if (pathname === "/reports/merchantTurnover") {
+    } else if (pathname === "/reports/projectFees") {
       return 2;
     }
     return 0;
@@ -70,24 +70,27 @@ const EcomReportTabsLayout = ({ children }: Props) => {
             }}
           >
             <Tab
+              value={0}
               onClick={() => {
                 handleNavigate("/reports/ecomFees");
               }}
               label="Total Fees"
               {...a11yProps(0)}
             />
-            {/* <Tab
-              onClick={() => {
-                handleNavigate("/reports/ecomChargedFees");
-              }}
-              label="Charged Fees"
-              {...a11yProps(1)}
-            /> */}
             <Tab
+              value={1}
               onClick={() => {
                 handleNavigate("/reports/merchantTurnover");
               }}
               label="Merchant Turnover"
+              {...a11yProps(1)}
+            />
+            <Tab
+              value={2}
+              onClick={() => {
+                handleNavigate("/reports/projectFees");
+              }}
+              label="Project Fees"
               {...a11yProps(2)}
             />
           </Tabs>
