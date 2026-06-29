@@ -317,12 +317,6 @@ const ChargedFees = () => {
       renderCell: ({}: TableRow) => <span> --</span>,
     },
 
-    {
-      flex: 1,
-      minWidth: 100,
-      field: "alert",
-      headerName: "ALERT",
-    },
 
     {
       flex: 1,
