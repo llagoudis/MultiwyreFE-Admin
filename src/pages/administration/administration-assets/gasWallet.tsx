@@ -117,9 +117,9 @@ const GasWallet = ({ data, walletsLoading }: Props) => {
         const platformSrcMap: Record<string, string> = {
           polygon:
             "https://hotcoin-snp-idcard.oss-accelerate.aliyuncs.com/cms/support/2025-07-23/4050b6ed-7075-44e2-96b5-55385ccd68b8.jpg",
-          bsc: "https://hotcoin-snp-idcard.oss-accelerate.aliyuncs.com/hotcoin/photo/2023/11/c182b59a5f8844c98665069b95755322trx.png",
+          bsc: "https://hotcoin-snp-idcard.oss-accelerate.aliyuncs.com/hotcoin/photo/2023/11/55af08382bf4438dadeeebc4daaef1a5bnb.png",
           trc20:
-            "https://hotcoin-snp-idcard.oss-accelerate.aliyuncs.com/hotcoin/photo/2023/11/55af08382bf4438dadeeebc4daaef1a5bnb.png",
+            "https://hotcoin-snp-idcard.oss-accelerate.aliyuncs.com/hotcoin/photo/2023/11/c182b59a5f8844c98665069b95755322trx.png",
         };
 
         const newSrc = platformSrcMap[platformName] ?? params.row.icon;
