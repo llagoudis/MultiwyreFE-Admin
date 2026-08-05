@@ -99,6 +99,35 @@ const EcommerceTransactions = () => {
 
     {
       minWidth: 200,
+      field: "customerId",
+      headerName: "CUSTOMER ID",
+      renderCell: ({ row }: TableRow) => (
+        <span>{row?.customerId || "---"}</span>
+      ),
+    },
+
+    {
+      minWidth: 280,
+      field: "parentTransactionId",
+      headerName: "PARENT TX ID",
+      renderCell: ({ row }: TableRow) => (
+        <span style={{ whiteSpace: "normal", wordBreak: "break-all" }}>
+          {row?.parentTransactionId || row?.transactionId || "---"}
+        </span>
+      ),
+    },
+
+    {
+      minWidth: 250,
+      field: "customerEmail",
+      headerName: "CUSTOMER E-MAIL",
+      renderCell: ({ row }: TableRow) => (
+        <span>{row?.customerEmail || row?.recoveryEmail || "---"}</span>
+      ),
+    },
+
+    {
+      minWidth: 200,
       field: "amount",
       valueGetter: ({ row }: TableRow) => row?.amount,
       headerName: "AMOUNT",
@@ -363,7 +392,7 @@ const EcommerceTransactions = () => {
         MERCHANT: row?.Merchant?.projectName ?? "---",
         "UNIQUE ID": row?.widgetNumber,
         "COMPANY NAME": `${row?.firstname} ${" "} ${row?.lastname}`,
-        "CUSTOMER EMAIL": row?.recoveryEmail,
+        "CUSTOMER EMAIL": row?.customerEmail || row?.recoveryEmail,
         "SENDER ADDRESS": row?.fromAddress,
         "RECEIVER ADDRESS": row?.toAddress,
         "CRYPTO AMOUNT": row?.exactAmount,
