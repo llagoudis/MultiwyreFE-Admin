@@ -97,7 +97,7 @@ const Wallets = () => {
     },
     {
       flex: 1,
-      minWidth: 220,
+      minWidth: 200,
       field: "address",
       headerName: "ADDRESS",
       renderCell: ({ row }: TableRow) => (
@@ -106,40 +106,6 @@ const Wallets = () => {
           <span
             className=" mr-2 cursor-pointer"
             onClick={() => onCopy(row?.address)}
-          >
-            <Image className=" cursor-pointer" src={CopyButton} alt="copy" />
-          </span>
-        </p>
-      ),
-    },
-    {
-      flex: 1,
-      minWidth: 200,
-      field: "privateKey",
-      headerName: "PRIVATE KEY",
-      renderCell: ({ row }: TableRow) => (
-        <p className=" flex w-full justify-between">
-          {maskAddress(row?.privateKey)}
-          <span
-            className=" mr-2 cursor-pointer"
-            onClick={() => onCopy(row?.privateKey)}
-          >
-            <Image className=" cursor-pointer" src={CopyButton} alt="copy" />
-          </span>
-        </p>
-      ),
-    },
-    {
-      flex: 1,
-      minWidth: 200,
-      field: "publicKey",
-      headerName: "PUBLIC KEY",
-      renderCell: ({ row }: TableRow) => (
-        <p className=" flex w-full justify-between">
-          {maskAddress(row?.publicKey)}
-          <span
-            className=" mr-2 cursor-pointer"
-            onClick={() => onCopy(row?.publicKey)}
           >
             <Image className=" cursor-pointer" src={CopyButton} alt="copy" />
           </span>
@@ -295,8 +261,6 @@ const Wallets = () => {
         "CUSTOMER ID": row?.customerId,
         CURRENCY: row?.assetId,
         ADDRESS: row?.address,
-        "PRIVATE KEY": row?.privateKey,
-        "PUBLIC KEY": row?.publicKey,
         BALANCE: row?.balance,
       });
     });

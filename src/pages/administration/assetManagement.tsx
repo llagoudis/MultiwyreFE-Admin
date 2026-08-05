@@ -328,18 +328,14 @@ const AssetManagement = () => {
   }, []);
 
   const [activeTab, setActiveTab] = useState({
-    value: "kraken",
-    label: "Kraken balance",
+    value: "GAS",
+    label: "Gas Wallet",
   });
   function switchTab(value: string, label: string) {
     setActiveTab({ value, label });
   }
 
   useEffect(() => {
-    if (activeTab?.value === "MASTER") {
-      void getAllBalance(activeTab?.value);
-    }
-
     if (activeTab?.value === "GAS") {
       void getAllBalance(activeTab?.value);
     }
@@ -350,11 +346,8 @@ const AssetManagement = () => {
   }, [activeTab]);
 
   const tabs = [
-    { name: "kraken", label: "Kraken Balance" },
-    { name: "MASTER", label: "Master Wallet" },
     { name: "GAS", label: "Gas Wallet" },
     { name: "COMMISSION", label: "Commission Wallet" },
-    // { name: "LIQUIDITY", label: "Liquidity Wallet" },
   ];
 
   async function handleGenerateWallet(walletName: string) {
@@ -397,39 +390,6 @@ const AssetManagement = () => {
       </div>
 
       <div className="my-4 grid gap-4">
-        {activeTab?.value === "kraken" && (
-          <HeaderLayout name={activeTab.label}>
-            {krakenBalance?.length && (
-              <div className="grid grid-cols-1">
-                <KrakenWallets
-                  data={krakenBalance}
-                  walletsLoading={krakenLoading}
-                />
-              </div>
-            )}
-          </HeaderLayout>
-        )}
-        {activeTab?.value === "MASTER" && (
-          <HeaderLayout name={activeTab.label}>
-            <div className="grid grid-cols-1">
-              <MuiButton
-                title={`Create ${activeTab.label} `}
-                className="btn-solid"
-                loading={createWalletLoading}
-                onClick={() => {
-                  enforcePermission(
-                    "write",
-                    () => void handleGenerateWallet(activeTab?.value),
-                  );
-                }}
-              />
-              <MasterWallet
-                data={state?.masterWalletBalance}
-                walletsLoading={walletsLoading}
-              />
-            </div>
-          </HeaderLayout>
-        )}
         {activeTab?.value === "GAS" && (
           <HeaderLayout name={activeTab.label}>
             <div className="grid grid-cols-1">
@@ -467,25 +427,6 @@ const AssetManagement = () => {
               />
               <CommissionWallet
                 data={state?.commissionWalletsBalance}
-                walletsLoading={walletsLoading}
-              />
-            </div>
-          </HeaderLayout>
-        )}
-
-        {activeTab?.value === "LIQUIDITY" && (
-          <HeaderLayout name={activeTab.label}>
-            <div className="grid grid-cols-1">
-              {/* <MuiButton
-                title={`Create ${activeTab.label} `}
-                className="btn-solid"
-                loading={createWalletLoading}
-                onClick={() => {
-                  void handleGenerateWallet(activeTab?.value);
-                }}
-              /> */}
-              <LiquidityWallets
-                data={state?.liquidityWalletBalance}
                 walletsLoading={walletsLoading}
               />
             </div>

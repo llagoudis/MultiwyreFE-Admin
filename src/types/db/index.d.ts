@@ -209,6 +209,7 @@ interface EcomTransactionDetails extends CommonKeys {
   createdAt: string;
   customerEmail: string;
   customerId: string;
+  parentTransactionId?: string;
   deletedAt: string;
   exactAmount: string;
   failedRedirectURL: string;
@@ -308,6 +309,7 @@ interface EcomTransactions extends CommonKeys {
   lastname: string;
   customerEmail: string;
   recoveryEmail: string;
+  parentTransactionId?: string;
   transactionHash: string;
   operationTypeData: OperationTypeData;
   status: string;
