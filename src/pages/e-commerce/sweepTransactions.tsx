@@ -71,6 +71,35 @@ const SweepTransactions = () => {
     },
 
     {
+      field: "customerId",
+      headerName: "CUSTOMER ID",
+      minWidth: 180,
+      renderCell: ({ row }: TableRow) => (
+        <span>{row?.customerId || "---"}</span>
+      ),
+    },
+
+    {
+      field: "parentTransactionId",
+      headerName: "PARENT TX ID",
+      minWidth: 250,
+      renderCell: ({ row }: TableRow) => (
+        <span style={{ whiteSpace: "normal", wordBreak: "break-all" }}>
+          {row?.parentTransactionId || row?.transactionId || "---"}
+        </span>
+      ),
+    },
+
+    {
+      field: "customerEmail",
+      headerName: "CUSTOMER E-MAIL",
+      minWidth: 220,
+      renderCell: ({ row }: TableRow) => (
+        <span>{row?.customerEmail || row?.recoveryEmail || "---"}</span>
+      ),
+    },
+
+    {
       minWidth: 250,
       field: "note",
       headerName: "SWEEP TYPE",
@@ -288,6 +317,9 @@ const SweepTransactions = () => {
         "CLIENT NAME": `${row?.Merchant?.User.firstname} ${" "} ${row?.Merchant?.User.lastname}`,
         MERCHANT: row?.Merchant?.projectName,
         "UNIQUE ID": row?.widgetNumber || null,
+        "CUSTOMER ID": row?.customerId || null,
+        "PARENT TX ID": row?.parentTransactionId || row?.transactionId || null,
+        "CUSTOMER EMAIL": row?.customerEmail || row?.recoveryEmail || null,
 
         "SWEEP TYPE":
           row?.note === "SWEEP_FROM_MASTER_TO_LIQUIDITY"

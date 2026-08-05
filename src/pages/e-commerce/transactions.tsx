@@ -66,7 +66,6 @@ const EcommerceTransactions = () => {
     {
       field: "customerId",
       headerName: "CUSTOMER ID",
-      hidden: true,
       minWidth: 200,
       valueGetter: ({ row }: TableRow) => row?.customerId,
       renderCell: ({ row }: TableRow) => (
@@ -77,10 +76,21 @@ const EcommerceTransactions = () => {
     },
 
     {
-      minWidth: 200,
+      minWidth: 280,
+      field: "parentTransactionId",
+      headerName: "PARENT TX ID",
+      renderCell: ({ row }: TableRow) => (
+        <span style={{ whiteSpace: "normal", wordBreak: "break-all" }}>
+          {row?.parentTransactionId || row?.transactionId || "---"}
+        </span>
+      ),
+    },
+
+    {
       field: "firstname",
       valueGetter: ({ row }: TableRow) => row?.firstname,
       headerName: "USER",
+      minWidth: 200,
       renderCell: ({ row }: TableRow) => (
         <Link
           href={`/banking/companies/view/${row?.Merchant?.User?.companyProfileId}`}
@@ -117,7 +127,7 @@ const EcommerceTransactions = () => {
     {
       minWidth: 300,
       field: "transactionHash",
-      headerName: "TRANSACTION ID",
+      headerName: "TRANSACTION HASH",
       renderCell: ({ row }: TableRow) => (
         <span
           style={{ whiteSpace: "normal", wordBreak: "break-all" }}
@@ -127,10 +137,10 @@ const EcommerceTransactions = () => {
 
     {
       minWidth: 300,
-      field: "recoveryEmail",
+      field: "customerEmail",
       headerName: "CUSTOMER E-MAIL",
       renderCell: ({ row }: TableRow) => (
-        <span>{`${row?.recoveryEmail ? row?.recoveryEmail : "---"} `}</span>
+        <span>{`${row?.customerEmail || row?.recoveryEmail || "---"} `}</span>
       ),
     },
 
@@ -501,7 +511,8 @@ const EcommerceTransactions = () => {
         MERCHANT: row?.Merchant?.projectName ?? "---",
         "UNIQUE ID": row?.widgetNumber,
         "COMPANY NAME": `${row?.firstname} ${" "} ${row?.lastname}`,
-        "CUSTOMER EMAIL": row?.recoveryEmail,
+        "PARENT TX ID": row?.parentTransactionId || row?.transactionId,
+        "CUSTOMER EMAIL": row?.customerEmail || row?.recoveryEmail,
         "SENDER ADDRESS": row?.fromAddress,
         "RECEIVER ADDRESS": row?.toAddress,
         "CRYPTO AMOUNT": row?.exactAmount,

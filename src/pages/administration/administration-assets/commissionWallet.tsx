@@ -258,40 +258,6 @@ const CommissionWallet = ({ data, walletsLoading }: Props) => {
       },
     },
     {
-      field: "privateKey",
-      minWidth: 60,
-      headerName: "Private Key",
-      flex: 1,
-      renderCell: (params: TableRow) => (
-        <div>
-          <IconButton
-            onClick={() =>
-              navigator.clipboard.writeText(params?.row?.privateKey)
-            }
-          >
-            <IoMdCopy />
-          </IconButton>
-        </div>
-      ),
-    },
-    {
-      field: "publicKey",
-      minWidth: 60,
-      headerName: "Public Key",
-      flex: 1,
-      renderCell: (params: TableRow) => (
-        <div>
-          <IconButton
-            onClick={() =>
-              navigator.clipboard.writeText(params?.row?.publicKey ?? "")
-            }
-          >
-            <IoMdCopy />
-          </IconButton>
-        </div>
-      ),
-    },
-    {
       field: "transfer",
       minWidth: 60,
       headerName: "Transfer",
