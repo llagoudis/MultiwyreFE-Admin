@@ -12,6 +12,8 @@ import MuiButton from "~/components/common/Button";
 import Header from "~/components/common/Header";
 import FilterComponent from "~/components/common/FilterComponent";
 import Link from "next/link";
+import { findColorCode } from "~/common/functions";
+import toast from "react-hot-toast";
 
 export interface currencyType {
   id: number;
@@ -143,6 +145,17 @@ const Accounts: FC<defaultCompanyProps> = ({ data }) => {
       ),
     },
     {
+      field: "status",
+      headerName: "STATUS",
+      flex: 1,
+      minWidth: 130,
+      renderCell: (params: { row: { status: string } }) => (
+        <span className={findColorCode(params?.row?.status as never) ?? "p-2 font-bold"}>
+          {params?.row?.status}
+        </span>
+      ),
+    },
+    {
       flex: 1,
       minWidth: 400,
       field: "assetAddress",
@@ -217,6 +230,35 @@ const Accounts: FC<defaultCompanyProps> = ({ data }) => {
       renderCell: () => "User",
       valueGetter: () => "User",
     },
+    {
+      field: "__actions",
+      headerName: "ACTIONS",
+      minWidth: 250,
+      sortable: false,
+      filterable: false,
+      renderCell: (params: { row: { id: number | string } }) => (
+        <div className="flex items-center gap-1.5">
+          <button
+            className="rounded bg-green-500 px-2.5 py-1 text-xs font-semibold text-white hover:bg-green-600"
+            onClick={() => setStatus(params.row.id, "APPROVED")}
+          >
+            Approve
+          </button>
+          <button
+            className="rounded border border-red-400 px-2.5 py-1 text-xs font-semibold text-red-600 hover:bg-red-50"
+            onClick={() => setStatus(params.row.id, "REJECTED")}
+          >
+            Reject
+          </button>
+          <button
+            className="rounded bg-red-500 px-2.5 py-1 text-xs font-semibold text-white hover:bg-red-600"
+            onClick={() => deleteRow(params.row.id)}
+          >
+            Delete
+          </button>
+        </div>
+      ),
+    },
   ];
 
   const [userAssets, setUserAssets] = useState<any>([]);
@@ -226,9 +268,24 @@ const Accounts: FC<defaultCompanyProps> = ({ data }) => {
     const assets = list?.User?.UserAssets?.map((item: any) => ({
       name: `${list?.User?.firstname} ${list?.User?.lastname}`,
       ...item,
+      // Account-level status has no dedicated backend field yet — derive a
+      // default so Approve/Reject can update it optimistically.
+      status: item?.status ?? (item?.active ? "APPROVED" : "PENDING"),
     }));
     setUserAssets(assets);
   }, [data]);
+
+  // NOTE: no account-status / account-delete endpoint exists yet — these mutate
+  // local state only. Wire to a real endpoint (e.g. PUT /accounts/action/{id})
+  // once the backend provides it.
+  const setStatus = (id: number | string, status: string) => {
+    setUserAssets((rows: any[]) => rows.map((r) => (r.id === id ? { ...r, status } : r)));
+    toast.success(`Account ${status.toLowerCase()} (local only — backend endpoint pending).`);
+  };
+  const deleteRow = (id: number | string) => {
+    setUserAssets((rows: any[]) => rows.filter((r) => r.id !== id));
+    toast.success("Account removed (local only — backend endpoint pending).");
+  };
 
   return (
     <Fragment>

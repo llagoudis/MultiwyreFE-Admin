@@ -108,7 +108,7 @@ const ChargedFees = () => {
   const [loading, setLoading] = useState(false);
   const [chargedFees, setChargedFees] = useState<TransactionDetails[]>([]);
   const [pagination, setPagination] = useState<DatagridPage>({
-    pageSize: 10,
+    pageSize: 25,
     page: 0,
   });
   const [pageCount, setPageCount] = useState<number>(0);
@@ -317,12 +317,6 @@ const ChargedFees = () => {
       renderCell: ({}: TableRow) => <span> --</span>,
     },
 
-    {
-      flex: 1,
-      minWidth: 100,
-      field: "alert",
-      headerName: "ALERT",
-    },
 
     {
       flex: 1,
@@ -674,7 +668,7 @@ const ChargedFees = () => {
         onFilterModelChange={onFilterChange}
         storageName={"Balances"}
         onSortModelChange={onSortChange}
-        pageSizeOptions={[10]}
+        pageSizeOptions={[25, 50, 100]}
         paginationModel={pagination}
         onPaginationModelChange={setPagination}
       />
