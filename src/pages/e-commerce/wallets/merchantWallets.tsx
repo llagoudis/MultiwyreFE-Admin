@@ -79,9 +79,24 @@ const MerchantWallets = () => {
       minWidth: 200,
       field: "projectId",
       flex: 1,
-      headerName: "PROJECT ID",
+      headerName: "PROJECT",
       renderCell: ({ row }: TableRow) => (
         <p>{row?.Merchant?.projectName ?? "---"}</p>
+      ),
+    },
+    {
+      minWidth: 200,
+      field: "company",
+      flex: 1,
+      headerName: "COMPANY",
+      renderCell: ({ row }: TableRow) => (
+        <p>
+          {row?.Merchant?.User
+            ? `${row?.Merchant?.User?.firstname ?? ""} ${
+                row?.Merchant?.User?.lastname ?? ""
+              }`
+            : "---"}
+        </p>
       ),
     },
 
@@ -153,7 +168,7 @@ const MerchantWallets = () => {
   const [wallets, setWallets] = useState<Project[]>([]);
 
   const [pagination, setPagination] = useState<DatagridPage>({
-    pageSize: 10,
+    pageSize: 25,
     page: 0,
   });
   const [pageCount, setPageCount] = useState<number>(0);
@@ -369,7 +384,7 @@ const MerchantWallets = () => {
         storageName={"AllTransactions"}
         getRowId={(row) => row.id}
         onSortModelChange={onSortChange}
-        pageSizeOptions={[10]}
+        pageSizeOptions={[25, 50, 100]}
         paginationModel={pagination}
         onPaginationModelChange={setPagination}
       />

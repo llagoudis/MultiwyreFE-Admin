@@ -11,6 +11,8 @@ import { statuslist } from "~/data/country";
 import FilterComponent from "~/components/common/FilterComponent";
 import { useAsyncMasterStore } from "~/hook/useAsyncMasterStore";
 import Link from "next/link";
+import { findColorCode } from "~/common/functions";
+import toast from "react-hot-toast";
 
 export interface currencyType {
   id: number;
@@ -61,6 +63,28 @@ interface LegalAgreementsProps {
 
 const Accounts: React.FC<LegalAgreementsProps> = ({ userDetails }) => {
   const [filterArray, setFilterArray] = useState<filterType[]>([]);
+
+  const [accountRows, setAccountRows] = useState<any[]>([]);
+  useEffect(() => {
+    setAccountRows(
+      (userDetails?.UserAssets ?? []).map((item: any) => ({
+        ...item,
+        // Account-level status has no dedicated backend field yet — derive a
+        // default so Approve/Reject can update it optimistically.
+        status: item?.status ?? (userDetails?.active ? "APPROVED" : "PENDING"),
+      })),
+    );
+  }, [userDetails]);
+
+  // NOTE: no account-status / account-delete endpoint exists yet — local only.
+  const setStatus = (id: number | string, status: string) => {
+    setAccountRows((rs) => rs.map((r) => (r.id === id ? { ...r, status } : r)));
+    toast.success(`Account ${status.toLowerCase()} (local only — backend endpoint pending).`);
+  };
+  const deleteRow = (id: number | string) => {
+    setAccountRows((rs) => rs.filter((r) => r.id !== id));
+    toast.success("Account removed (local only — backend endpoint pending).");
+  };
 
   const handleCheckboxChange = (itemName: string) => {
     // Check if an object with the matching "name" property exists in filterArray
@@ -191,6 +215,17 @@ const Accounts: React.FC<LegalAgreementsProps> = ({ userDetails }) => {
     },
     {
       flex: 1,
+      minWidth: 130,
+      field: "status",
+      headerName: "STATUS",
+      renderCell: (params: { row: { status: string } }) => (
+        <span className={findColorCode(params?.row?.status as never) ?? "p-2 font-bold"}>
+          {params?.row?.status}
+        </span>
+      ),
+    },
+    {
+      flex: 1,
       minWidth: 400,
       field: "assetAddress",
       headerName: "PROVIDER NUMBER",
@@ -241,20 +276,39 @@ const Accounts: React.FC<LegalAgreementsProps> = ({ userDetails }) => {
     {
       flex: 1,
       minWidth: 100,
-      field: "Status",
-      valueGetter: () => (userDetails.active ? "ACTIVE" : "INACTIVE"),
-      headerName: "STATUS",
-      renderCell: () => (
-        <span>{userDetails.active ? "ACTIVE" : "INACTIVE"}</span>
-      ),
-    },
-    {
-      flex: 1,
-      minWidth: 100,
       field: "Provider_name",
       headerName: "PROVIDER NAME",
       valueGetter: () => "Fireblocks",
       renderCell: () => <span>Fireblocks</span>,
+    },
+    {
+      field: "__actions",
+      headerName: "ACTIONS",
+      minWidth: 250,
+      sortable: false,
+      filterable: false,
+      renderCell: (params: { row: { id: number | string } }) => (
+        <div className="flex items-center gap-1.5">
+          <button
+            className="rounded bg-green-500 px-2.5 py-1 text-xs font-semibold text-white hover:bg-green-600"
+            onClick={() => setStatus(params.row.id, "APPROVED")}
+          >
+            Approve
+          </button>
+          <button
+            className="rounded border border-red-400 px-2.5 py-1 text-xs font-semibold text-red-600 hover:bg-red-50"
+            onClick={() => setStatus(params.row.id, "REJECTED")}
+          >
+            Reject
+          </button>
+          <button
+            className="rounded bg-red-500 px-2.5 py-1 text-xs font-semibold text-white hover:bg-red-600"
+            onClick={() => deleteRow(params.row.id)}
+          >
+            Delete
+          </button>
+        </div>
+      ),
     },
 
     // {
@@ -446,7 +500,7 @@ const Accounts: React.FC<LegalAgreementsProps> = ({ userDetails }) => {
         <Box sx={{ width: "100%" }}>
           <MuiDataGrid
             storageName="accounts"
-            rows={userDetails.UserAssets}
+            rows={accountRows}
             columns={columns}
             slotProps={{
               toolbar: { csvOptions: { fileName: "Individuals Accounts" } },
