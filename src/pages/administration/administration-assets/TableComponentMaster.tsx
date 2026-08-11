@@ -141,7 +141,7 @@ const TableComponentMaster = (reload: propType) => {
   const [reports, setReports] = useState<Project[]>([]);
 
   const [pagination, setPagination] = useState<DatagridPage>({
-    pageSize: 10,
+    pageSize: 25,
     page: 0,
   });
   const [pageCount, setPageCount] = useState<number>(0);
@@ -407,7 +407,7 @@ const TableComponentMaster = (reload: propType) => {
         storageName={"ManualTrxs"}
         getRowId={(row) => row.id}
         onSortModelChange={onSortChange}
-        pageSizeOptions={[10]}
+        pageSizeOptions={[25, 50, 100]}
         paginationModel={pagination}
         onPaginationModelChange={setPagination}
       />

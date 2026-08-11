@@ -23,6 +23,7 @@ import CopyButton from "../../../assets/general/copyicon.svg";
 interface Merchant {
   projectId: number;
   projectName: string;
+  User?: User;
 }
 
 interface Project {
@@ -68,7 +69,7 @@ const CustomerWallets = () => {
     { field: "id", headerName: "ID", width: 100 },
     {
       field: "createdAt",
-      headerName: "CREATED AT",
+      headerName: "DATE",
       flex: 1,
       minWidth: 200,
       renderCell: ({ row }: TableRow) => (
@@ -78,11 +79,27 @@ const CustomerWallets = () => {
 
     {
       minWidth: 200,
+      field: "projectId",
+      flex: 1,
+      headerName: "PROJECT",
+      renderCell: ({ row }: TableRow) => (
+        <p>{row?.Merchant?.projectName ?? "---"}</p>
+      ),
+    },
+
+    {
+      minWidth: 200,
       field: "company",
       flex: 1,
       headerName: "COMPANY",
       renderCell: ({ row }: TableRow) => (
-        <p>{row?.Merchant?.projectName ?? "---"}</p>
+        <p>
+          {row?.Merchant?.User
+            ? `${row?.Merchant?.User?.firstname ?? ""} ${
+                row?.Merchant?.User?.lastname ?? ""
+              }`
+            : "---"}
+        </p>
       ),
     },
 
@@ -91,16 +108,6 @@ const CustomerWallets = () => {
       flex: 1,
       field: "customerId",
       headerName: "CUSTOMER ID",
-    },
-
-    {
-      minWidth: 200,
-      field: "projectId",
-      flex: 1,
-      headerName: "MERCHANT",
-      renderCell: ({ row }: TableRow) => (
-        <p>{row?.Merchant?.projectName ?? "---"}</p>
-      ),
     },
 
     {
@@ -172,7 +179,7 @@ const CustomerWallets = () => {
   console.log("wallets: ", wallets);
 
   const [pagination, setPagination] = useState<DatagridPage>({
-    pageSize: 10,
+    pageSize: 25,
     page: 0,
   });
   const [pageCount, setPageCount] = useState<number>(0);
@@ -390,7 +397,7 @@ const CustomerWallets = () => {
         storageName={"AllTransactions"}
         getRowId={(row) => row.id}
         onSortModelChange={onSortChange}
-        pageSizeOptions={[10]}
+        pageSizeOptions={[25, 50, 100]}
         paginationModel={pagination}
         onPaginationModelChange={setPagination}
       />

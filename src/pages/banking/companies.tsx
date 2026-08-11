@@ -62,7 +62,7 @@ const Companies = () => {
 
   const [sort, setSort] = useState(intialSort);
   const [pagination, setPagination] = useState<DatagridPage>({
-    pageSize: 10,
+    pageSize: 25,
     page: 0,
   });
   const [filterModel, setFilterModel] = useState<GridFilterModel>({
@@ -155,14 +155,6 @@ const Companies = () => {
       ),
     },
 
-    {
-      flex: 1,
-      minWidth: 150,
-      field: "accountStatus",
-      headerName: "ACCOUNT STATUS",
-      type: "singleSelect",
-      valueOptions: ["Active", "Suspended"],
-    },
     { flex: 1, minWidth: 250, field: "companyEmail", headerName: "EMAIL" },
     {
       flex: 1,
@@ -449,7 +441,7 @@ const Companies = () => {
             storageName={"Companies"}
             onSortModelChange={onSortChange}
             filterModel={filterModel}
-            pageSizeOptions={[10]}
+            pageSizeOptions={[25, 50, 100]}
             paginationModel={pagination}
             onPaginationModelChange={setPagination}
           />

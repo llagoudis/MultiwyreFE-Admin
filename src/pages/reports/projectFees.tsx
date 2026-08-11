@@ -2,16 +2,14 @@ import React, { useEffect, useState, startTransition } from "react";
 import { Button, TextField } from "@mui/material";
 import toast from "react-hot-toast";
 import { ApiHandler } from "~/service/UtilService";
-import { merchantsTurnover } from "~/service/ApiRequests";
+import { fetchEcomProjectFees } from "~/service/ApiRequests";
 import {
   ExportCsv,
-  formatDateTime,
   getTodayAndLast10thDate,
 } from "~/common/functions";
-import ReportTabsLayout from "~/components/ReportTabsLayout";
 import MuiDataGrid from "~/components/common/MuiDataGrid";
 import {
-  GridSortModel,
+  type GridSortModel,
   GridToolbarColumnsButton,
   GridToolbarContainer,
   GridToolbarDensitySelector,
@@ -23,49 +21,38 @@ interface User {
   azureId: string;
   firstname: string;
   lastname: string;
+  companyProfileId: string;
 }
 
-interface Project {
-  totalValueIneurType2: string;
-  totalValueIneurType1: string;
-  totalTransactionsType2: string;
-  totalTransactionsType1: string;
+// Per project, per currency fee aggregation. Backend: ecomtransaction/project-fees
+interface ProjectFee {
   projectId: number;
   projectName: string;
   companyId: string;
   User: User;
-  totalTransactions: number;
-  totalValueIneur: number;
-  createdAt: string;
+  currency: string;
+  markupFee: string;
+  networkFee: string;
 }
 
-type TableRow = { row: Project };
-const MerchantTurnover = () => {
+type TableRow = { row: ProjectFee };
+
+const ProjectFees = () => {
   const { todayDate, last10thDate } = getTodayAndLast10thDate();
-  const [fromDate, setFromDate] = useState<any>("2024-07-01");
+  const projectFeesEnabled =
+    process.env.NEXT_PUBLIC_FEATURE_PROJECT_FEES === "true";
+  const [fromDate, setFromDate] = useState<any>(last10thDate);
   const [toDate, setToDate] = useState<any>(todayDate);
 
   const columns = [
-    {
-      minWidth: 50,
-      field: "id",
-      headerName: "ID",
-      renderCell: ({ row }: TableRow) => <p>{row?.projectId ?? "---"}</p>,
-    },
-    {
-      minWidth: 200,
-      field: "createdAt",
-      headerName: "CREATED AT",
-      renderCell: ({ row }: TableRow) => (
-        <p>{formatDateTime(row?.createdAt) ?? "---"}</p>
-      ),
-    },
     {
       minWidth: 200,
       field: "firstname",
       flex: 1,
       headerName: "COMPANY",
-      renderCell: ({ row }: TableRow) => <p>{row?.User?.firstname ?? "---"}</p>,
+      renderCell: ({ row }: TableRow) => (
+        <p>{`${row?.User?.firstname ?? ""} ${row?.User?.lastname ?? ""}`}</p>
+      ),
     },
     {
       minWidth: 200,
@@ -75,96 +62,59 @@ const MerchantTurnover = () => {
       renderCell: ({ row }: TableRow) => <p>{row?.projectName ?? "---"}</p>,
     },
     {
-      minWidth: 100,
+      minWidth: 120,
       field: "currency",
-      flex: 1,
       headerName: "CURRENCY",
-      renderCell: ({ row }: TableRow) => <p>EUR</p>,
+      renderCell: ({ row }: TableRow) => <p>{row?.currency ?? "---"}</p>,
     },
     {
-      minWidth: 150,
+      minWidth: 180,
       flex: 1,
-      field: "totalValueIneur",
-      headerName: "INCOMING AMOUNT",
-      renderCell: ({ row }: TableRow) => (
-        <p>{row?.totalValueIneurType1 ?? "---"}</p>
-      ),
+      field: "markupFee",
+      headerName: "MARK-UP FEE",
+      align: "right" as const,
+      headerAlign: "right" as const,
+      renderCell: ({ row }: TableRow) => <p>{row?.markupFee ?? "---"}</p>,
     },
     {
-      minWidth: 150,
+      minWidth: 180,
       flex: 1,
-      field: "outgoingAmount",
-      headerName: "OUTGOING AMOUNT",
-      renderCell: ({ row }: TableRow) => (
-        <p>{row?.totalValueIneurType2 ?? "---"}</p>
-      ),
-    },
-    {
-      minWidth: 150,
-      flex: 1,
-      field: "totalTransactions",
-      headerName: "INCOMING COUNT",
-      renderCell: ({ row }: TableRow) => (
-        <p>{row?.totalTransactionsType1 ?? "---"}</p>
-      ),
-    },
-    {
-      minWidth: 200,
-      flex: 1,
-      field: "outgoingCount",
-      headerName: "OUTGOING COUNT",
-      renderCell: ({ row }: TableRow) => (
-        <p>{row?.totalTransactionsType2 ?? "---"}</p>
-      ),
+      field: "networkFee",
+      headerName: "NETWORK FEE",
+      align: "right" as const,
+      headerAlign: "right" as const,
+      renderCell: ({ row }: TableRow) => <p>{row?.networkFee ?? "---"}</p>,
     },
   ];
 
-  const [reports, setReports] = useState<Project[]>([]);
-
+  const [reports, setReports] = useState<ProjectFee[]>([]);
   const [pagination, setPagination] = useState<DatagridPage>({
     pageSize: 25,
     page: 0,
   });
   const [pageCount, setPageCount] = useState<number>(0);
-
   const [loading, setLoading] = useState(false);
-  const [sort, setSort] = useState({
-    field: "",
-    sort: "",
-  });
+  const [sort, setSort] = useState({ field: "", sort: "" });
   const [state, setState] = React.useState({
-    createdAt: undefined,
     firstname: undefined,
     projectName: undefined,
     currency: undefined,
-    totalValueIneur: undefined,
-    outgoingAmount: undefined,
-    totalTransactions: undefined,
-    outgoingCount: undefined,
+    markupFee: undefined,
+    networkFee: undefined,
   });
 
-  const {
-    createdAt,
-    firstname,
-    projectName,
-    currency,
-    totalValueIneur,
-    outgoingAmount,
-    totalTransactions,
-    outgoingCount,
-  } = state;
+  const { firstname, projectName, currency, markupFee, networkFee } = state;
 
   const getReports = async (data: FilterType) => {
     setLoading(true);
     const [res, error]: APIResult<{
-      data: Project[];
+      data: ProjectFee[];
       pagination: Pagination;
-    }> = await ApiHandler(merchantsTurnover, data);
+    }> = await ApiHandler(fetchEcomProjectFees, data);
     setLoading(false);
     if (error) {
-      toast.error("Failed to load users");
+      toast.error("Failed to load project fees");
     }
-
     if (res?.success && res.body?.data) {
       startTransition(() => {
         setPageCount(res?.body?.pagination?.totalItems);
@@ -174,6 +124,7 @@ const MerchantTurnover = () => {
   };
 
   useEffect(() => {
+    if (!projectFeesEnabled) return;
     const paramsQuery: FilterType = {
       pageSize: pagination.pageSize,
       pageNumber: pagination.page + 1,
@@ -181,42 +132,18 @@ const MerchantTurnover = () => {
       toDate: toDate ?? todayDate,
     };
 
-    if (createdAt) paramsQuery.createdAt = createdAt;
     if (firstname) paramsQuery.firstname = firstname;
     if (projectName) paramsQuery.projectName = projectName;
     if (currency) paramsQuery.currency = currency;
-    if (totalValueIneur) paramsQuery.totalValueIneur = totalValueIneur;
-    if (outgoingAmount) paramsQuery.outgoingAmount = outgoingAmount;
-    if (totalTransactions) paramsQuery.totalTransactions = totalTransactions;
-    if (outgoingCount) paramsQuery.outgoingCount = outgoingCount;
+    if (markupFee) paramsQuery.markupFee = markupFee;
+    if (networkFee) paramsQuery.networkFee = networkFee;
     if (sort) paramsQuery.field = sort.field;
     if (sort) paramsQuery.sort = sort.sort;
+
     startTransition(() => {
       void getReports(paramsQuery);
     });
-  }, [
-    pagination,
-    fromDate,
-    toDate,
-    createdAt,
-    firstname,
-    projectName,
-    currency,
-    totalValueIneur,
-    outgoingAmount,
-    totalTransactions,
-    outgoingCount,
-    sort,
-  ]);
-
-  const [col, setColumns] = useState<any>(null);
-  useEffect(() => {
-    const storedColumnsJSON = localStorage.getItem("AllTransactions");
-    if (storedColumnsJSON) {
-      const storedColumns = JSON.parse(storedColumnsJSON);
-      setColumns(storedColumns);
-    }
-  }, []);
+  }, [pagination, fromDate, toDate, firstname, projectName, currency, markupFee, networkFee, sort]);
 
   function handleChangeStartDate(e: any) {
     setFromDate(e.target.value);
@@ -232,56 +159,39 @@ const MerchantTurnover = () => {
       fromDate: fromDate ?? last10thDate,
       toDate: toDate ?? todayDate,
     };
-
-    if (createdAt) paramsQuery.createdAt = createdAt;
-    if (firstname) paramsQuery.firstname = firstname;
-    if (projectName) paramsQuery.projectName = projectName;
-    if (currency) paramsQuery.currency = currency;
-    if (totalValueIneur) paramsQuery.totalValueIneur = totalValueIneur;
-    if (outgoingAmount) paramsQuery.outgoingAmount = outgoingAmount;
-    if (totalTransactions) paramsQuery.totalTransactions = totalTransactions;
-    if (outgoingCount) paramsQuery.outgoingCount = outgoingCount;
     if (sort) paramsQuery.field = sort.field;
     if (sort) paramsQuery.sort = sort.sort;
 
     const [res, error]: APIResult<{
-      data: Project[];
+      data: ProjectFee[];
       pagination: Pagination;
-    }> = await ApiHandler(merchantsTurnover, paramsQuery);
+    }> = await ApiHandler(fetchEcomProjectFees, paramsQuery);
 
     if (error) {
       return;
     }
 
     const reportHeaderval: TransactionReport[] = [];
-
     res?.body?.data?.map((row) => {
       reportHeaderval.push({
-        ID: row?.projectId,
-        "CREATED AT": formatDateTime(row?.createdAt),
-        COMPANY: row?.User?.firstname,
+        ID: `${row?.projectId}-${row?.currency}`,
+        COMPANY: `${row?.User?.firstname ?? ""} ${row?.User?.lastname ?? ""}`,
         PROJECT: row?.projectName,
-        CURRENCY: "EUR",
-        "INCOMING AMOUNT": row?.totalValueIneurType1,
-        "OUTGOING AMOUNT": row?.totalValueIneurType2,
-        "INCOMING COUNT": row?.totalTransactionsType1,
-        "OUTGOING COUNT": row?.totalTransactionsType2,
+        CURRENCY: row?.currency,
+        "MARK-UP FEE": row?.markupFee,
+        "NETWORK FEE": row?.networkFee,
       });
     });
-
-    void ExportCsv(reportHeaderval, "Transactions Report");
+    void ExportCsv(reportHeaderval, "Project Fees Report");
   }
 
   function handleClear() {
     setState({
-      createdAt: undefined,
       firstname: undefined,
       projectName: undefined,
       currency: undefined,
-      totalValueIneur: undefined,
-      outgoingAmount: undefined,
-      totalTransactions: undefined,
-      outgoingCount: undefined,
+      markupFee: undefined,
+      networkFee: undefined,
     });
   }
 
@@ -291,7 +201,6 @@ const MerchantTurnover = () => {
         <GridToolbarColumnsButton />
         <GridToolbarFilterButton />
         <GridToolbarDensitySelector />
-
         <Button size="small" onClick={handleExport}>
           Export
         </Button>
@@ -304,7 +213,6 @@ const MerchantTurnover = () => {
 
   const onSortChange = React.useCallback((sortModel: GridSortModel) => {
     const { field, sort } = sortModel[0] ?? {};
-
     if (field && sort) {
       setSort({ field, sort: sort === "desc" ? "DESC" : "ASC" });
     } else {
@@ -326,10 +234,10 @@ const MerchantTurnover = () => {
     <>
       <EcomReportTabsLayout>
         <div className=" flex flex-wrap gap-2 bg-[#E2E8F080] px-3 py-2">
-          <div className="flex w-[200px]  flex-col gap-1">
-            <label htmlFor="filter_id">Start Date</label>
+          <div className="flex w-[200px] flex-col gap-1">
+            <label htmlFor="filter_start">Start Date</label>
             <TextField
-              id="filter_id"
+              id="filter_start"
               variant="outlined"
               className=" bg-white"
               size="small"
@@ -340,9 +248,9 @@ const MerchantTurnover = () => {
           </div>
 
           <div className="flex w-[200px] flex-col gap-1">
-            <label htmlFor="filter_id">End Date</label>
+            <label htmlFor="filter_end">End Date</label>
             <TextField
-              id="filter_id"
+              id="filter_end"
               variant="outlined"
               className=" bg-white"
               size="small"
@@ -365,8 +273,8 @@ const MerchantTurnover = () => {
           sortingMode="server"
           paginationMode="server"
           onFilterModelChange={onFilterChange}
-          storageName={"AllTransactions"}
-          getRowId={(row) => row.projectId}
+          storageName={"ProjectFees"}
+          getRowId={(row) => `${row.projectId}-${row.currency}`}
           onSortModelChange={onSortChange}
           pageSizeOptions={[25, 50, 100]}
           paginationModel={pagination}
@@ -377,4 +285,4 @@ const MerchantTurnover = () => {
   );
 };
 
-export default MerchantTurnover;
+export default ProjectFees;

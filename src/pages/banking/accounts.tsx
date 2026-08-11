@@ -36,7 +36,7 @@ const Accounts = () => {
   const intialSort = { field: "createdAt", sort: "DESC" };
   const [sort, setSort] = useState(intialSort);
   const [pagination, setPagination] = useState<DatagridPage>({
-    pageSize: 10,
+    pageSize: 25,
     page: 0,
   });
   const [filterModel, setFilterModel] = useState<GridFilterModel>({
@@ -76,7 +76,7 @@ const Accounts = () => {
       valueGetter: (params: { row: any }) =>
         params?.row?.User?.firstname + " " + params?.row?.User?.lastname,
       field: "holder",
-      headerName: "HOLDER",
+      headerName: "FULL NAME",
       renderCell: (params: { row: any }) => (
         <span>{`${params?.row?.User?.firstname ?? ""} ${
           params?.row?.User?.lastname ?? ""
@@ -118,14 +118,6 @@ const Accounts = () => {
       renderCell: (params: { row: any }) => (
         <span>{params?.row?.User?.active ? "ACTIVE" : "INACTIVE"}</span>
       ),
-    },
-    {
-      flex: 1,
-      minWidth: 150,
-      field: "Provider_name",
-      valueGetter: (params: { row: any }) => "Fireblocks",
-      headerName: "PROVIDER NAME",
-      renderCell: () => <span>Fireblocks</span>,
     },
 
     {
@@ -392,7 +384,7 @@ const Accounts = () => {
             onFilterModelChange={onFilterChange}
             onSortModelChange={onSortChange}
             filterModel={filterModel}
-            pageSizeOptions={[10]}
+            pageSizeOptions={[25, 50, 100]}
             paginationModel={pagination}
             onPaginationModelChange={setPagination}
           />
