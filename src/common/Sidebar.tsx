@@ -72,6 +72,11 @@ const routes: Route[] = [
         icon: home as ImageType,
       },
       {
+        name: "Whitelist addresses",
+        path: "/banking/whitelist",
+        icon: home as ImageType,
+      },
+      {
         name: "price lists",
         path: "/banking/price-list",
         icon: home as ImageType,
