@@ -889,8 +889,9 @@ interface WhitelistAddress extends CommonKeys {
   description: string;
   externalWalletId: string;
   status: boolean;
-  Assets: Assets;
-  User: Partial<User>;
+  approvalStatus?: "pending" | "approved" | "rejected" | string;
+  Assets?: Assets;
+  User?: Partial<User>;
 }
 
 interface TransferFees extends CommonKeys {
