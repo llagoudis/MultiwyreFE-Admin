@@ -73,8 +73,8 @@ const initalFormState: CompanyFormType = {
   password: "",
   confirmedPassword: "",
   roles: "ex_user",
-  priceList: "",
-  limitList: "",
+  priceList: NaN,
+  limitList: NaN,
 };
 
 type Owner = {
