@@ -40,7 +40,7 @@ const initalFormState: CompanyFormType = {
   registrationNumber: "",
   incorporationDate: "",
   natureOfBusiness: "",
-  country: NaN,
+  country: "",
   state: "",
   city: "",
   addressLine1: "",
@@ -73,8 +73,8 @@ const initalFormState: CompanyFormType = {
   password: "",
   confirmedPassword: "",
   roles: "ex_user",
-  priceList: NaN,
-  limitList: NaN,
+  priceList: "",
+  limitList: "",
 };
 
 type Owner = {
@@ -176,8 +176,10 @@ const CompanyForm = () => {
     };
 
     Object.keys(values).forEach((key) => {
+      const v = values[key];
+      if (v === null || v === undefined || v === "" || (typeof v === "number" && isNaN(v))) return;
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      companyForm.append(key, values[key]);
+      companyForm.append(key, v);
     });
 
     if (companyId) {
@@ -454,8 +456,8 @@ const CompanyForm = () => {
                         getOptionLabel={(option) => {
                           return option.fullname ?? "";
                         }}
-                        isOptionEqualToValue={(_, option) => {
-                          return _.userId === option.fullname;
+                        isOptionEqualToValue={(option, value) => {
+                          return option.userId === value.userId;
                         }}
                       />
                       <p className="text-sm text-red-500">{error?.message}</p>
