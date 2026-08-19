@@ -4,6 +4,16 @@ import { ApiHandler } from "../UtilService";
 const fetchAdministrators = () =>
   ProtectedAxiosInstance.get("/user/admin-users");
 
+const fetchAdminBeneficiary = (): APIFunction<AdminBeneficiaryDetails> =>
+  ApiHandler(() => ProtectedAxiosInstance.get("/admin/beneficiary-details"));
+
+const saveAdminBeneficiary = (
+  data: AdminBeneficiaryDetails,
+): APIFunction<AdminBeneficiaryDetails> =>
+  ApiHandler(() =>
+    ProtectedAxiosInstance.put("/admin/beneficiary-details", data),
+  );
+
 const createNewAdminUser = async (
   data: AdministratorUser,
 ): APIFunction<AdministratorUser> =>
@@ -29,6 +39,8 @@ const deleteAdminUser = async (id: string): APIFunction<AdministratorUser> =>
 export {
   createNewAdminUser,
   fetchAdministrators,
+  fetchAdminBeneficiary,
+  saveAdminBeneficiary,
   updateAdminUser,
   deleteAdminUser,
 };

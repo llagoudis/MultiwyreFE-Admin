@@ -28,3 +28,17 @@ interface AdministratorUser {
   reEnterPassword: string;
   azureId?: string;
 }
+
+interface AdminBeneficiaryDetails {
+  iban: string;
+  customerName: string;
+  customerAddress: string;
+  customerZip: string;
+  destinationAddress: string;
+  customerSwift: string;
+  bankName: string;
+  bankAddress: string;
+  bankLocation: string;
+  bankCountry: string;
+  bankReference: string;
+}

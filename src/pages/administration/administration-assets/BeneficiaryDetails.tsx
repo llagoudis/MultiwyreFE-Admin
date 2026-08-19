@@ -1,30 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TextField } from "@mui/material";
 import toast from "react-hot-toast";
 import MuiButton from "~/components/common/Button";
+import {
+  fetchAdminBeneficiary,
+  saveAdminBeneficiary,
+} from "~/service/api/administrator";
 
-/**
- * Beneficiary Details — Admin Wallet tab (new in the v3 design).
- * Read-only by default; Edit switches every field to an input; Save commits,
- * Cancel reverts.
- *
- * NOTE: there is NO backend endpoint for this yet. It is state-only per the
- * design handoff. Wire `handleSave` to a real GET/POST/PUT once the backend
- * provides a per-wallet beneficiary/bank-account contract (fields below).
- */
-type BeneficiaryForm = {
-  iban: string;
-  customerName: string;
-  customerAddress: string;
-  customerZip: string;
-  destinationAddress: string;
-  customerSwift: string;
-  bankName: string;
-  bankAddress: string;
-  bankLocation: string;
-  bankCountry: string;
-  bankReference: string;
-};
+type BeneficiaryForm = AdminBeneficiaryDetails;
 
 const EMPTY: BeneficiaryForm = {
   iban: "",
@@ -39,6 +22,16 @@ const EMPTY: BeneficiaryForm = {
   bankCountry: "",
   bankReference: "",
 };
+
+const toForm = (data?: Partial<BeneficiaryForm> | null): BeneficiaryForm => ({
+  ...EMPTY,
+  ...Object.fromEntries(
+    (Object.keys(EMPTY) as (keyof BeneficiaryForm)[]).map((key) => [
+      key,
+      data?.[key] ?? "",
+    ]),
+  ),
+});
 
 const SECTIONS: [string, [keyof BeneficiaryForm, string][]][] = [
   ["Customer Information", [
@@ -62,6 +55,18 @@ const BeneficiaryDetails = () => {
   const [saved, setSaved] = useState<BeneficiaryForm>(EMPTY);
   const [draft, setDraft] = useState<BeneficiaryForm>(EMPTY);
   const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    const load = async () => {
+      const [res] = await fetchAdminBeneficiary();
+      if (!res?.success) return;
+      const form = toForm(res.body);
+      setSaved(form);
+      setDraft(form);
+    };
+    load();
+  }, []);
 
   const startEdit = () => {
     setDraft(saved);
@@ -71,11 +76,16 @@ const BeneficiaryDetails = () => {
     setDraft(saved);
     setEditing(false);
   };
-  const handleSave = () => {
-    // TODO(backend): POST/PUT beneficiary details once an endpoint exists.
-    setSaved(draft);
+  const handleSave = async () => {
+    setSaving(true);
+    const [res] = await saveAdminBeneficiary(draft);
+    setSaving(false);
+    if (!res?.success) return;
+    const form = toForm(res.body);
+    setSaved(form);
+    setDraft(form);
     setEditing(false);
-    toast.success("Beneficiary details saved locally (no backend endpoint yet).");
+    toast.success(res.message || "Beneficiary details saved");
   };
 
   return (
@@ -119,7 +129,12 @@ const BeneficiaryDetails = () => {
           {editing ? (
             <>
               <MuiButton title="Cancel" className="btn-outlined" onClick={cancel} />
-              <MuiButton title="Save" className="btn-solid" onClick={handleSave} />
+              <MuiButton
+                title="Save"
+                className="btn-solid"
+                onClick={handleSave}
+                loading={saving}
+              />
             </>
           ) : (
             <MuiButton title="Edit" className="btn-outlined" onClick={startEdit} />
