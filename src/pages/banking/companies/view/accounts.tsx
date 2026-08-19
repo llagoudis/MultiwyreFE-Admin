@@ -14,6 +14,10 @@ import FilterComponent from "~/components/common/FilterComponent";
 import Link from "next/link";
 import { findColorCode } from "~/common/functions";
 import toast from "react-hot-toast";
+import {
+  deleteUserAsset,
+  updateUserAssetAccountStatus,
+} from "~/service/api/accounts";
 
 export interface currencyType {
   id: number;
@@ -268,23 +272,33 @@ const Accounts: FC<defaultCompanyProps> = ({ data }) => {
     const assets = list?.User?.UserAssets?.map((item: any) => ({
       name: `${list?.User?.firstname} ${list?.User?.lastname}`,
       ...item,
-      // Account-level status has no dedicated backend field yet — derive a
-      // default so Approve/Reject can update it optimistically.
-      status: item?.status ?? (item?.active ? "APPROVED" : "PENDING"),
+      status: item?.accountStatus ?? "PENDING",
     }));
     setUserAssets(assets);
   }, [data]);
 
-  // NOTE: no account-status / account-delete endpoint exists yet — these mutate
-  // local state only. Wire to a real endpoint (e.g. PUT /accounts/action/{id})
-  // once the backend provides it.
-  const setStatus = (id: number | string, status: string) => {
-    setUserAssets((rows: any[]) => rows.map((r) => (r.id === id ? { ...r, status } : r)));
-    toast.success(`Account ${status.toLowerCase()} (local only — backend endpoint pending).`);
+  const setStatus = async (id: number | string, status: "APPROVED" | "REJECTED") => {
+    const [res] = await updateUserAssetAccountStatus(id, status);
+    if (!res?.success) {
+      toast.error("Failed to update account status");
+      return;
+    }
+    setUserAssets((rows: any[]) =>
+      rows.map((r) => (r.id === id ? { ...r, status, accountStatus: status } : r)),
+    );
+    toast.success(`Account ${status.toLowerCase()}`);
   };
-  const deleteRow = (id: number | string) => {
+  const deleteRow = async (id: number | string) => {
+    if (!window.confirm("Delete this account? This cannot be undone from this screen.")) {
+      return;
+    }
+    const [res] = await deleteUserAsset(id);
+    if (!res?.success) {
+      toast.error("Failed to delete account");
+      return;
+    }
     setUserAssets((rows: any[]) => rows.filter((r) => r.id !== id));
-    toast.success("Account removed (local only — backend endpoint pending).");
+    toast.success("Account deleted");
   };
 
   return (

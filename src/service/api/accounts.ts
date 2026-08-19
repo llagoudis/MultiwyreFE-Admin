@@ -19,3 +19,16 @@ export const updateWhitelistApprovalStatus = (
       status,
     }),
   );
+
+export const updateUserAssetAccountStatus = (
+  id: number | string,
+  status: "PENDING" | "APPROVED" | "REJECTED",
+): APIFunction<UserAssets> =>
+  ApiHandler(() =>
+    ProtectedAxiosInstance.patch(`/accounts/assets/${id}/status`, { status }),
+  );
+
+export const deleteUserAsset = (id: number | string): APIFunction<{ id: number }> =>
+  ApiHandler(() =>
+    ProtectedAxiosInstance.delete(`/accounts/assets/${id}`, { data: {} }),
+  );

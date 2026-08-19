@@ -638,6 +638,7 @@ interface UserAssets extends CommonKeys {
   privateKey?: string;
   publicKey?: string;
   Merchant?: Merchant;
+  accountStatus?: "PENDING" | "APPROVED" | "REJECTED" | string;
 }
 
 interface Merchants extends CommonKeys {

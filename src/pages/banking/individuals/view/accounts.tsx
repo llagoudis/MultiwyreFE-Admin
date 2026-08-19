@@ -13,6 +13,10 @@ import { useAsyncMasterStore } from "~/hook/useAsyncMasterStore";
 import Link from "next/link";
 import { findColorCode } from "~/common/functions";
 import toast from "react-hot-toast";
+import {
+  deleteUserAsset,
+  updateUserAssetAccountStatus,
+} from "~/service/api/accounts";
 
 export interface currencyType {
   id: number;
@@ -69,21 +73,33 @@ const Accounts: React.FC<LegalAgreementsProps> = ({ userDetails }) => {
     setAccountRows(
       (userDetails?.UserAssets ?? []).map((item: any) => ({
         ...item,
-        // Account-level status has no dedicated backend field yet — derive a
-        // default so Approve/Reject can update it optimistically.
-        status: item?.status ?? (userDetails?.active ? "APPROVED" : "PENDING"),
+        status: item?.accountStatus ?? "PENDING",
       })),
     );
   }, [userDetails]);
 
-  // NOTE: no account-status / account-delete endpoint exists yet — local only.
-  const setStatus = (id: number | string, status: string) => {
-    setAccountRows((rs) => rs.map((r) => (r.id === id ? { ...r, status } : r)));
-    toast.success(`Account ${status.toLowerCase()} (local only — backend endpoint pending).`);
+  const setStatus = async (id: number | string, status: "APPROVED" | "REJECTED") => {
+    const [res] = await updateUserAssetAccountStatus(id, status);
+    if (!res?.success) {
+      toast.error("Failed to update account status");
+      return;
+    }
+    setAccountRows((rs) =>
+      rs.map((r) => (r.id === id ? { ...r, status, accountStatus: status } : r)),
+    );
+    toast.success(`Account ${status.toLowerCase()}`);
   };
-  const deleteRow = (id: number | string) => {
+  const deleteRow = async (id: number | string) => {
+    if (!window.confirm("Delete this account? This cannot be undone from this screen.")) {
+      return;
+    }
+    const [res] = await deleteUserAsset(id);
+    if (!res?.success) {
+      toast.error("Failed to delete account");
+      return;
+    }
     setAccountRows((rs) => rs.filter((r) => r.id !== id));
-    toast.success("Account removed (local only — backend endpoint pending).");
+    toast.success("Account deleted");
   };
 
   const handleCheckboxChange = (itemName: string) => {
