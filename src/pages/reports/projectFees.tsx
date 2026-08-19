@@ -39,8 +39,6 @@ type TableRow = { row: ProjectFee };
 
 const ProjectFees = () => {
   const { todayDate, last10thDate } = getTodayAndLast10thDate();
-  const projectFeesEnabled =
-    process.env.NEXT_PUBLIC_FEATURE_PROJECT_FEES === "true";
   const [fromDate, setFromDate] = useState<any>(last10thDate);
   const [toDate, setToDate] = useState<any>(todayDate);
 
@@ -124,7 +122,6 @@ const ProjectFees = () => {
   };
 
   useEffect(() => {
-    if (!projectFeesEnabled) return;
     const paramsQuery: FilterType = {
       pageSize: pagination.pageSize,
       pageNumber: pagination.page + 1,

@@ -9,8 +9,6 @@ type Props = {
 const EcomReportTabsLayout = ({ children }: Props) => {
   const router = useRouter();
   const { pathname } = router;
-  const projectFeesEnabled =
-    process.env.NEXT_PUBLIC_FEATURE_PROJECT_FEES === "true";
 
   const [value, setValue] = React.useState(() => {
     if (pathname === "/reports/merchantTurnover") {
@@ -87,16 +85,14 @@ const EcomReportTabsLayout = ({ children }: Props) => {
               label="Merchant Turnover"
               {...a11yProps(1)}
             />
-            {projectFeesEnabled && (
-              <Tab
-                value={2}
-                onClick={() => {
-                  handleNavigate("/reports/projectFees");
-                }}
-                label="Project Fees"
-                {...a11yProps(2)}
-              />
-            )}
+            <Tab
+              value={2}
+              onClick={() => {
+                handleNavigate("/reports/projectFees");
+              }}
+              label="Project Fees"
+              {...a11yProps(2)}
+            />
           </Tabs>
         </Box>
       </Box>
