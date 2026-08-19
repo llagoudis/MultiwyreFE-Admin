@@ -126,9 +126,7 @@ const formatDate = (date: string | undefined): string => {
   return formattedDate;
 };
 
-const encryptionKey =
-  process.env.NEXT_PUBLIC_ENCRYPTION_KEY ??
-  "Xca{J*3CM-#1S!EmVLryqE,a;x+Bu/L+_XxgaFhGJPi_8Vu7kx2?";
+const encryptionKey = process.env.NEXT_PUBLIC_ENCRYPTION_KEY ?? "";
 export const encryptPayload = (data: any) => {
   const encryptedData = CryptoJS.AES.encrypt(
     JSON.stringify(data),
