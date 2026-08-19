@@ -822,9 +822,9 @@ interface FirebockAssets {
   vaultId: string;
   asset: any;
   assetAddress: string;
-  privateKey: string;
-  publicKey: string;
-  mnemonic: string | null;
+  privateKey?: string;
+  publicKey?: string;
+  mnemonic?: string | null;
   createdAt: string;
   color?: string;
   bgcolor?: string;
