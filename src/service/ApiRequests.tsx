@@ -1,3 +1,6 @@
+/**
+ * @deprecated Prefer service/api/* modules. Do not add new exports here.
+ */
 import axios, { type Axios } from "axios";
 import toast from "react-hot-toast";
 import ProtectedAxiosInstance from "./ProtectedAxiosInstance";
@@ -175,12 +178,6 @@ export const fetchChargedFees = (params: FilterType) => {
 export const fetchDailyUserBalances = (params: FilterType) => {
   return ProtectedAxiosInstance.get(
     `transaction/userDailyBalance?${convertUrlParams(params)}`,
-  );
-};
-
-export const fetchMerchantTurnover = (params: FilterType) => {
-  return ProtectedAxiosInstance.get(
-    `e-commerce/merchants?${convertUrlParams(params)}`,
   );
 };
 

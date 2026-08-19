@@ -22,8 +22,6 @@ import { KrakenCoin } from "~/common/functions";
 import MasterWallet from "./administration-assets/masterWallet";
 import CommissionWallet from "./administration-assets/commissionWallet";
 import GasWallet from "./administration-assets/gasWallet";
-import LiquidityWallets from "./administration-assets/liquidityWallet";
-import KrakenWallets from "./administration-assets/krakenWallet";
 import BeneficiaryDetails from "./administration-assets/BeneficiaryDetails";
 import { enforcePermission } from "~/utils/permissions";
 
@@ -468,24 +466,6 @@ const AssetManagement = () => {
           </HeaderLayout>
         )}
 
-        {activeTab?.value === "LIQUIDITY" && (
-          <HeaderLayout name={activeTab.label}>
-            <div className="grid grid-cols-1">
-              {/* <MuiButton
-                title={`Create ${activeTab.label} `}
-                className="btn-solid"
-                loading={createWalletLoading}
-                onClick={() => {
-                  void handleGenerateWallet(activeTab?.value);
-                }}
-              /> */}
-              <LiquidityWallets
-                data={state?.liquidityWalletBalance}
-                walletsLoading={walletsLoading}
-              />
-            </div>
-          </HeaderLayout>
-        )}
       </div>
     </div>
   );
