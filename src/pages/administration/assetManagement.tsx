@@ -19,7 +19,6 @@ import {
 } from "~/service/ApiRequests";
 import toast from "react-hot-toast";
 import { KrakenCoin } from "~/common/functions";
-import MasterWallet from "./administration-assets/masterWallet";
 import CommissionWallet from "./administration-assets/commissionWallet";
 import GasWallet from "./administration-assets/gasWallet";
 import BeneficiaryDetails from "./administration-assets/BeneficiaryDetails";
@@ -185,9 +184,6 @@ const AssetManagement = () => {
           vaultId: item?.vaultId,
           asset: item?.asset,
           assetAddress: item?.assetAddress,
-          privateKey: item?.privateKey,
-          publicKey: item?.publicKey,
-          mnemonic: item?.mnemonic,
           createdAt: item?.createdAt,
           color: "#5C77BA",
           bgcolor: "#D3E5FF",
@@ -205,9 +201,6 @@ const AssetManagement = () => {
             asset: item?.asset,
             assetId: item?.assetId,
             assetAddress: item?.assetAddress,
-            privateKey: item?.privateKey,
-            publicKey: item?.publicKey,
-            mnemonic: item?.mnemonic,
             createdAt: item?.createdAt,
             color: "#5C77BA",
             bgcolor: "#D3E5FF",
@@ -222,9 +215,6 @@ const AssetManagement = () => {
           vaultId: item?.vaultId,
           asset: item?.asset,
           assetAddress: item?.assetAddress,
-          privateKey: item?.privateKey,
-          publicKey: item?.publicKey,
-          mnemonic: item?.mnemonic,
           createdAt: item?.createdAt,
           color: "#5C77BA",
           bgcolor: "#D3E5FF",
@@ -327,18 +317,14 @@ const AssetManagement = () => {
   }, []);
 
   const [activeTab, setActiveTab] = useState({
-    value: "MASTER",
-    label: "Master Wallet",
+    value: "GAS",
+    label: "Gas Wallet",
   });
   function switchTab(value: string, label: string) {
     setActiveTab({ value, label });
   }
 
   useEffect(() => {
-    if (activeTab?.value === "MASTER") {
-      void getAllBalance(activeTab?.value);
-    }
-
     if (activeTab?.value === "GAS") {
       void getAllBalance(activeTab?.value);
     }
@@ -349,12 +335,10 @@ const AssetManagement = () => {
   }, [activeTab]);
 
   const tabs = [
-    { name: "MASTER", label: "Master Wallet" },
     { name: "GAS", label: "Gas Wallet" },
     { name: "COMMISSION", label: "Commission Wallet" },
     { name: "BENEFICIARY", label: "Beneficiary Details" },
-    // { name: "LIQUIDITY", label: "Liquidity Wallet" },
-    // Kraken Balance tab removed per v3 design (data source may still exist elsewhere).
+    // Master / Liquidity / Kraken tabs removed per client: keep Gas + Commission only.
   ];
 
   async function handleGenerateWallet(walletName: string) {
@@ -400,27 +384,6 @@ const AssetManagement = () => {
         {activeTab?.value === "BENEFICIARY" && (
           <HeaderLayout name={activeTab.label}>
             <BeneficiaryDetails />
-          </HeaderLayout>
-        )}
-        {activeTab?.value === "MASTER" && (
-          <HeaderLayout name={activeTab.label}>
-            <div className="grid grid-cols-1">
-              <MuiButton
-                title={`Create ${activeTab.label} `}
-                className="btn-solid"
-                loading={createWalletLoading}
-                onClick={() => {
-                  enforcePermission(
-                    "write",
-                    () => void handleGenerateWallet(activeTab?.value),
-                  );
-                }}
-              />
-              <MasterWallet
-                data={state?.masterWalletBalance}
-                walletsLoading={walletsLoading}
-              />
-            </div>
           </HeaderLayout>
         )}
         {activeTab?.value === "GAS" && (
