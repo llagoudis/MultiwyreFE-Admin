@@ -68,8 +68,6 @@ type submissionType = {
 interface AdminWallets extends CommonKeys {
   assetId: string;
   address: string;
-  privateKey: string;
-  publicKey: string | null;
   balance: string;
   icon: string;
   id: number;
@@ -125,8 +123,6 @@ const AdminWallets = ({ data, walletsLoading }: Props) => {
       address: wallet.assetAddress,
       balance: wallet.balance,
       icon: wallet.asset.icon,
-      privateKey: wallet.privateKey,
-      publicKey: wallet.publicKey,
       id: wallet.id,
       name: wallet.asset.name,
     }));
@@ -208,40 +204,6 @@ const AdminWallets = ({ data, walletsLoading }: Props) => {
           </div>
         );
       },
-    },
-    {
-      field: "privateKey",
-      minWidth: 60,
-      headerName: "Private Key",
-      flex: 1,
-      renderCell: (params: TableRow) => (
-        <div>
-          <IconButton
-            onClick={() =>
-              navigator.clipboard.writeText(params?.row?.privateKey ?? "")
-            }
-          >
-            <IoMdCopy />
-          </IconButton>
-        </div>
-      ),
-    },
-    {
-      field: "publicKey",
-      minWidth: 60,
-      headerName: "Public Key",
-      flex: 1,
-      renderCell: (params: TableRow) => (
-        <div>
-          <IconButton
-            onClick={() =>
-              navigator.clipboard.writeText(params?.row?.publicKey ?? "")
-            }
-          >
-            <IoMdCopy />
-          </IconButton>
-        </div>
-      ),
     },
     {
       field: "transfer",
