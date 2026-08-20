@@ -126,8 +126,11 @@ const formatDate = (date: string | undefined): string => {
   return formattedDate;
 };
 
-const encryptionKey = process.env.NEXT_PUBLIC_ENCRYPTION_KEY ?? "";
+const encryptionKey = process.env.NEXT_PUBLIC_ENCRYPTION_KEY;
 export const encryptPayload = (data: any) => {
+  if (!encryptionKey) {
+    throw new Error("NEXT_PUBLIC_ENCRYPTION_KEY is not configured");
+  }
   const encryptedData = CryptoJS.AES.encrypt(
     JSON.stringify(data),
     encryptionKey,
@@ -137,6 +140,9 @@ export const encryptPayload = (data: any) => {
   return { data: encrypt };
 };
 export const decryptResponse = (data: any) => {
+  if (!encryptionKey) {
+    throw new Error("NEXT_PUBLIC_ENCRYPTION_KEY is not configured");
+  }
   const decryptedData = CryptoJS.AES.decrypt(data, encryptionKey).toString(
     CryptoJS.enc.Utf8,
   );

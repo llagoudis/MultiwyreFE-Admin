@@ -29,4 +29,8 @@ const config = {
   output: "standalone",
 };
 
+if (!process.env.NEXT_PUBLIC_ENCRYPTION_KEY) {
+  throw new Error("NEXT_PUBLIC_ENCRYPTION_KEY is not configured");
+}
+
 export default config;
