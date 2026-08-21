@@ -317,8 +317,6 @@ const CustomerWallets = () => {
         MERCHANT: row?.Merchant?.projectName,
         CURRENCY: row?.assetId,
         ADDRESS: row?.address,
-        "PRIVATE KEY": row?.privateKey,
-        "PUBLIC KEY": row?.publicKey,
         BALANCE: row?.balance,
       });
     });

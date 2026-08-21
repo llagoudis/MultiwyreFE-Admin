@@ -305,8 +305,6 @@ const MerchantWallets = () => {
         "PROJECT NAME": row?.Merchant?.projectName,
         CURRENCY: row?.assetId,
         ADDRESS: row?.assetAddress,
-        "PRIVATE KEY": row?.privateKey,
-        "PUBLIC KEY": row?.publicKey,
         BALANCE: row?.balance,
       });
     });
