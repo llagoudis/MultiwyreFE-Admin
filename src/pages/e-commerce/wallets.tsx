@@ -31,8 +31,6 @@ interface Project {
   assetId: string;
   balance: string;
   customerId: string;
-  privateKey: string;
-  publicKey: string;
   createdAt: string;
 }
 
@@ -139,8 +137,6 @@ const Wallets = () => {
     assetId: undefined,
     balance: undefined,
     customerId: undefined,
-    privateKey: undefined,
-    publicKey: undefined,
     createdAt: undefined,
     projectId: undefined,
   });
@@ -151,8 +147,6 @@ const Wallets = () => {
     assetId,
     balance,
     customerId,
-    privateKey,
-    publicKey,
     createdAt,
     projectId,
   } = state;
@@ -189,8 +183,6 @@ const Wallets = () => {
     if (assetId) paramsQuery.assetId = assetId;
     if (balance) paramsQuery.balance = balance;
     if (customerId) paramsQuery.customerId = customerId;
-    if (privateKey) paramsQuery.privateKey = privateKey;
-    if (publicKey) paramsQuery.publicKey = publicKey;
     if (projectId) paramsQuery.adprojectname = projectId;
     if (sort) paramsQuery.field = sort.field;
     if (sort) paramsQuery.sort = sort.sort;
@@ -206,8 +198,6 @@ const Wallets = () => {
     assetId,
     balance,
     customerId,
-    privateKey,
-    publicKey,
     createdAt,
     projectId,
     sort,
@@ -235,8 +225,6 @@ const Wallets = () => {
     if (assetId) paramsQuery.assetId = assetId;
     if (balance) paramsQuery.balance = balance;
     if (customerId) paramsQuery.customerId = customerId;
-    if (privateKey) paramsQuery.privateKey = privateKey;
-    if (publicKey) paramsQuery.publicKey = publicKey;
     if (projectId) paramsQuery.adprojectname = projectId;
     if (sort) paramsQuery.field = sort.field;
     if (sort) paramsQuery.sort = sort.sort;
@@ -275,8 +263,6 @@ const Wallets = () => {
       assetId: undefined,
       balance: undefined,
       customerId: undefined,
-      privateKey: undefined,
-      publicKey: undefined,
       createdAt: undefined,
       projectId: undefined,
     });

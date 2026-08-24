@@ -16,7 +16,7 @@ const HeaderLayout = ({
   onChange = () => null,
 }: propType) => {
   return (
-    <div className="w-full  border border-slate-200 ">
+    <div className="w-full max-w-full min-w-0 overflow-hidden border border-slate-200 ">
       <div className="flex justify-between bg-[#E2E8F080] px-3 py-4">
         <h2 className="subHeader">{name}</h2>
 
@@ -35,7 +35,11 @@ const HeaderLayout = ({
         )}
       </div>
 
-      {children && <div className=" px-3 py-4">{children}</div>}
+      {children && (
+        <div className="max-w-full min-w-0 overflow-x-auto px-3 py-4">
+          {children}
+        </div>
+      )}
     </div>
   );
 };

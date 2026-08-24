@@ -52,7 +52,7 @@ const MuiDataGrid = ({
   }, []);
 
   return (
-    <Box>
+    <Box sx={{ width: "100%", maxWidth: "100%", minWidth: 0, overflowX: "auto" }}>
       {/* {loading ? (
         <LinearBuffer />
       ) : ( */}
@@ -70,6 +70,8 @@ const MuiDataGrid = ({
         rowModesModel={rowModesModel}
         onPaginationModelChange={onPaginationModelChange}
         sx={{
+          width: "100%",
+          maxWidth: "100%",
           color: "#1E293B",
           fontSize: 12,
           borderColor: "rgb(224, 224, 224)",

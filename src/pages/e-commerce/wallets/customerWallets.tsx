@@ -33,8 +33,6 @@ interface Project {
   assetId: string;
   balance: string;
   customerId: string;
-  privateKey: string;
-  publicKey: string;
   createdAt: string;
 }
 
@@ -133,40 +131,6 @@ const CustomerWallets = () => {
         </p>
       ),
     },
-    // {
-    //   flex: 1,
-    //   minWidth: 200,
-    //   field: "privateKey",
-    //   headerName: "PRIVATE KEY",
-    //   renderCell: ({ row }: TableRow) => (
-    //     <p className=" flex w-full justify-between">
-    //       {maskAddress(row?.privateKey)}
-    //       <span
-    //         className=" mr-2 cursor-pointer"
-    //         onClick={() => onCopy(row?.privateKey)}
-    //       >
-    //         <Image className=" cursor-pointer" src={CopyButton} alt="copy" />
-    //       </span>
-    //     </p>
-    //   ),
-    // },
-    // {
-    //   flex: 1,
-    //   minWidth: 200,
-    //   field: "publicKey",
-    //   headerName: "PUBLIC KEY",
-    //   renderCell: ({ row }: TableRow) => (
-    //     <p className=" flex w-full justify-between">
-    //       {maskAddress(row?.publicKey)}
-    //       <span
-    //         className=" mr-2 cursor-pointer"
-    //         onClick={() => onCopy(row?.publicKey)}
-    //       >
-    //         <Image className=" cursor-pointer" src={CopyButton} alt="copy" />
-    //       </span>
-    //     </p>
-    //   ),
-    // },
     {
       flex: 1,
       minWidth: 200,
@@ -195,8 +159,6 @@ const CustomerWallets = () => {
     assetId: undefined,
     balance: undefined,
     customerId: undefined,
-    privateKey: undefined,
-    publicKey: undefined,
     createdAt: undefined,
     projectId: undefined,
   });
@@ -207,8 +169,6 @@ const CustomerWallets = () => {
     assetId,
     balance,
     customerId,
-    privateKey,
-    publicKey,
     createdAt,
     projectId,
   } = state;
@@ -245,8 +205,6 @@ const CustomerWallets = () => {
     if (assetId) paramsQuery.assetId = assetId;
     if (balance) paramsQuery.balance = balance;
     if (customerId) paramsQuery.customerId = customerId;
-    if (privateKey) paramsQuery.privateKey = privateKey;
-    if (publicKey) paramsQuery.publicKey = publicKey;
     if (projectId) paramsQuery.adprojectname = projectId;
     if (sort) paramsQuery.field = sort.field;
     if (sort) paramsQuery.sort = sort.sort;
@@ -262,8 +220,6 @@ const CustomerWallets = () => {
     assetId,
     balance,
     customerId,
-    privateKey,
-    publicKey,
     createdAt,
     projectId,
     sort,
@@ -291,8 +247,6 @@ const CustomerWallets = () => {
     if (assetId) paramsQuery.assetId = assetId;
     if (balance) paramsQuery.balance = balance;
     if (customerId) paramsQuery.customerId = customerId;
-    if (privateKey) paramsQuery.privateKey = privateKey;
-    if (publicKey) paramsQuery.publicKey = publicKey;
     if (projectId) paramsQuery.adprojectname = projectId;
     if (sort) paramsQuery.field = sort.field;
     if (sort) paramsQuery.sort = sort.sort;
@@ -331,8 +285,6 @@ const CustomerWallets = () => {
       assetId: undefined,
       balance: undefined,
       customerId: undefined,
-      privateKey: undefined,
-      publicKey: undefined,
       createdAt: undefined,
       projectId: undefined,
     });
