@@ -31,9 +31,6 @@ interface Project {
   address: string;
   assetId: string;
   balance: string;
-
-  privateKey: string;
-  publicKey: string;
   createdAt: string;
 }
 
@@ -123,40 +120,6 @@ const MerchantWallets = () => {
         </p>
       ),
     },
-    // {
-    //   flex: 1,
-    //   minWidth: 200,
-    //   field: "privateKey",
-    //   headerName: "PRIVATE KEY",
-    //   renderCell: ({ row }: TableRow) => (
-    //     <p className=" flex w-full justify-between">
-    //       {maskAddress(row?.privateKey)}
-    //       <span
-    //         className=" mr-2 cursor-pointer"
-    //         onClick={() => onCopy(row?.privateKey)}
-    //       >
-    //         <Image className=" cursor-pointer" src={CopyButton} alt="copy" />
-    //       </span>
-    //     </p>
-    //   ),
-    // },
-    // {
-    //   flex: 1,
-    //   minWidth: 200,
-    //   field: "publicKey",
-    //   headerName: "PUBLIC KEY",
-    //   renderCell: ({ row }: TableRow) => (
-    //     <p className=" flex w-full justify-between">
-    //       {maskAddress(row?.publicKey)}
-    //       <span
-    //         className=" mr-2 cursor-pointer"
-    //         onClick={() => onCopy(row?.publicKey)}
-    //       >
-    //         <Image className=" cursor-pointer" src={CopyButton} alt="copy" />
-    //       </span>
-    //     </p>
-    //   ),
-    // },
     {
       flex: 1,
       minWidth: 200,
@@ -183,9 +146,6 @@ const MerchantWallets = () => {
     assetAddress: undefined,
     assetId: undefined,
     balance: undefined,
-
-    privateKey: undefined,
-    publicKey: undefined,
     createdAt: undefined,
     projectId: undefined,
   });
@@ -195,9 +155,6 @@ const MerchantWallets = () => {
     assetAddress,
     assetId,
     balance,
-
-    privateKey,
-    publicKey,
     createdAt,
     projectId,
   } = state;
@@ -233,9 +190,6 @@ const MerchantWallets = () => {
     if (assetAddress) paramsQuery.assetAddress = assetAddress;
     if (assetId) paramsQuery.assetId = assetId;
     if (balance) paramsQuery.balance = balance;
-
-    if (privateKey) paramsQuery.privateKey = privateKey;
-    if (publicKey) paramsQuery.publicKey = publicKey;
     if (projectId) paramsQuery.adprojectname = projectId;
     if (sort) paramsQuery.field = sort.field;
     if (sort) paramsQuery.sort = sort.sort;
@@ -250,9 +204,6 @@ const MerchantWallets = () => {
     assetAddress,
     assetId,
     balance,
-
-    privateKey,
-    publicKey,
     createdAt,
     projectId,
     sort,
@@ -279,9 +230,6 @@ const MerchantWallets = () => {
     if (assetAddress) paramsQuery.assetAddress = assetAddress;
     if (assetId) paramsQuery.assetId = assetId;
     if (balance) paramsQuery.balance = balance;
-
-    if (privateKey) paramsQuery.privateKey = privateKey;
-    if (publicKey) paramsQuery.publicKey = publicKey;
     if (projectId) paramsQuery.adprojectname = projectId;
     if (sort) paramsQuery.field = sort.field;
     if (sort) paramsQuery.sort = sort.sort;
@@ -318,8 +266,6 @@ const MerchantWallets = () => {
       assetAddress: undefined,
       assetId: undefined,
       balance: undefined,
-      privateKey: undefined,
-      publicKey: undefined,
       createdAt: undefined,
       projectId: undefined,
     });
