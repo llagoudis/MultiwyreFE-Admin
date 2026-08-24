@@ -352,7 +352,7 @@ export const getAllMerchantWallets = (params: FilterType) => {
 
 export const fetchEcomTransactions = (params: FilterType) => {
   return ProtectedAxiosInstance.get(
-    `getall/ecom/transactions?${convertUrlParams(params)}`,
+    `ecomtransaction/ecom/transactions?${convertUrlParams(params)}`,
   );
 };
 
