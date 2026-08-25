@@ -368,6 +368,49 @@ const calculatePaymentType = ({ row }: TableRow) => {
   }
 };
 
+/** Persisted EURO_TRANSACTIONS bank block worth rendering */
+export function hasEuroBankDetails(row?: {
+  EuroTransaction?: EuroTransaction | null;
+} | null): boolean {
+  const et = row?.EuroTransaction;
+  return Boolean(
+    et && (et.IBAN || et.customerName || et.swift || et.bankName),
+  );
+}
+
+/** Beneficiary column: EUR withdraw / OTC → EUR */
+export function isEuroBeneficiaryRow(row: any): boolean {
+  if (!hasEuroBankDetails(row)) return false;
+  const op = Number(row?.operationType);
+  if (op === 2 && row?.assetId === "EUR") return true;
+  if (row?.destinationAssetId === "EUR") return true;
+  return false;
+}
+
+/** Sender column: EUR deposit / inbound */
+export function isEuroSenderRow(row: any): boolean {
+  if (!hasEuroBankDetails(row)) return false;
+  if (isEuroBeneficiaryRow(row)) return false;
+  const op = Number(row?.operationType);
+  if (op === 1 && row?.assetId === "EUR") return true;
+  if (row?.assetId === "EUR") return true;
+  return false;
+}
+
+export function formatEuroBankPlain(
+  et?: EuroTransaction | null,
+): string {
+  if (!et) return "";
+  return [
+    et.customerName || "",
+    `IBAN: ${et.IBAN || "-"}`,
+    `BIC: ${et.swift || "-"}`,
+    `Bank Name: ${et.bankName || "-"}`,
+  ]
+    .filter((part) => part !== "")
+    .join(" ");
+}
+
 export const countryFlags = [
   {
     countryCode: 355,

@@ -3,7 +3,10 @@ import { Box, TextField, Button } from "@mui/material";
 import MuiDataGrid from "~/components/common/MuiDataGrid";
 import { useRouter } from "next/router";
 import { ApiHandler } from "~/service/UtilService";
-import { fetchReportTransactions } from "~/service/ApiRequests";
+import {
+  fetchReportTransactions,
+  updateTranscationStatus,
+} from "~/service/ApiRequests";
 import toast from "react-hot-toast";
 import {
   ExportCsv,
@@ -56,6 +59,7 @@ const Orders = () => {
   });
   const [pageCount, setPageCount] = useState<number>(0);
   const [loading, setTableLoading] = useState(false);
+  const [listVersion, setListVersion] = useState(0);
   const { todayDate, last10thDate } = getTodayAndLast10thDate();
   const [fromDate, setFromDate] = useState<any>(last10thDate);
   const [toDate, setToDate] = useState<any>(todayDate);
@@ -142,6 +146,7 @@ const Orders = () => {
     void getReports(paramsQuery);
   }, [
     pagination,
+    listVersion,
     fromDate,
     toDate,
     clientName,
@@ -339,23 +344,76 @@ const Orders = () => {
       field: "actions",
       type: "actions",
       // headerName: "ACTIONS",
-      getActions: ({ row }: TableRow) => [
-        <GridActionsCellItem
-          key="view"
-          label="View"
-          showInMenu
-          onClick={() => {
-            onNavigation(`/exchange/orders/view/${row?.transactionId}`);
-          }}
-          sx={{
-            margin: "0 1rem",
-            padding: "5px 0",
-            // borderBottom: "1px solid #cdcdcd",
-            width: "6rem",
-            fontSize: "14px",
-          }}
-        />,
-      ],
+      getActions: ({ row }: TableRow) => {
+        const isOtcPending =
+          row?.note === "OTC_TRANSACTION" &&
+          String(row?.status ?? "").toUpperCase() === "PENDING";
+        const actions = [
+          <GridActionsCellItem
+            key="view"
+            label="View"
+            showInMenu
+            onClick={() => {
+              onNavigation(`/exchange/orders/view/${row?.transactionId}`);
+            }}
+            sx={{
+              margin: "0 1rem",
+              padding: "5px 0",
+              width: "6rem",
+              fontSize: "14px",
+            }}
+          />,
+        ];
+        if (isOtcPending) {
+          actions.push(
+            <GridActionsCellItem
+              key="confirm"
+              label="Confirm"
+              showInMenu
+              onClick={() => {
+                void (async () => {
+                  try {
+                    const res: any = await updateTranscationStatus(
+                      row.transactionId,
+                      { status: "COMPLETED", subStatus: "CONFIRMED" },
+                    );
+                    const ok =
+                      res?.success === true ||
+                      res?.data?.success === true ||
+                      res?.status === 200;
+                    if (!ok) {
+                      toast.error("Failed to confirm OTC order");
+                      return;
+                    }
+                    toast.success("OTC order confirmed");
+                    setOrders((prev) =>
+                      prev.map((o) =>
+                        o.transactionId === row.transactionId
+                          ? {
+                              ...o,
+                              status: "COMPLETED",
+                              subStatus: "CONFIRMED",
+                            }
+                          : o,
+                      ),
+                    );
+                    setListVersion((v) => v + 1);
+                  } catch {
+                    toast.error("Failed to confirm OTC order");
+                  }
+                })();
+              }}
+              sx={{
+                margin: "0 1rem",
+                padding: "5px 0",
+                width: "6rem",
+                fontSize: "14px",
+              }}
+            />,
+          );
+        }
+        return actions;
+      },
     },
   ];
 
