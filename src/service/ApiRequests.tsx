@@ -352,7 +352,7 @@ export const getAllMerchantWallets = (params: FilterType) => {
 
 export const fetchEcomTransactions = (params: FilterType) => {
   return ProtectedAxiosInstance.get(
-    `ecomtransaction/ecom/transactions?${convertUrlParams(params)}`,
+    `getall/ecom/transactions?${convertUrlParams(params)}`,
   );
 };
 
@@ -414,11 +414,6 @@ export const adminCommissionWithdraw = (data: any) =>
     `/adminwallet/admin-commission-wallet-transactions`,
     data,
   );
-
-export const updateCommissionWalletAddress = (data: {
-  wallets: { id: number; assetAddress: string }[];
-}) =>
-  ProtectedAxiosInstance.put(`/adminwallet/commission-wallet-address`, data);
 
 export const ManualWithdraw = (data: any) =>
   ProtectedAxiosInstance.post(`/adminwallet/manual_transactions`, data);

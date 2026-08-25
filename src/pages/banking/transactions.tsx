@@ -30,13 +30,9 @@ import {
   Debounce,
   ExportCsv,
   formatDateTime,
-  formatEuroBankPlain,
   getStatusColor,
-  isEuroBeneficiaryRow,
-  isEuroSenderRow,
 } from "~/common/functions";
 import StatusText from "~/components/common/StatusText";
-import { EuroBankBlock } from "~/components/common/EuroBankBlock";
 
 export interface currencyType {
   id: number;
@@ -161,8 +157,8 @@ const Transactions = () => {
         row?.SourceAsset?.User?.lastname
       : "External";
 
-    if (isEuroSenderRow(row)) {
-      return formatEuroBankPlain(row?.EuroTransaction);
+    if (Number(row?.operationType) === 2 && row?.assetId === "EUR") {
+      return `Customer name :${row?.EuroTransaction?.customerName} IBAN :${row?.EuroTransaction?.IBAN} BIC :${row?.EuroTransaction?.swift} Bank Name:  ${row?.EuroTransaction?.bankName}`;
     }
 
     if (userId && sourceAddress) {
@@ -185,8 +181,8 @@ const Transactions = () => {
         row?.DestinationUser?.User?.lastname
       : "External";
 
-    if (isEuroBeneficiaryRow(row)) {
-      return formatEuroBankPlain(row?.EuroTransaction);
+    if (Number(row?.operationType) === 2 && row?.assetId === "EUR") {
+      return `Customer name :${row?.EuroTransaction?.customerName} IBAN :${row?.EuroTransaction?.IBAN} BIC :${row?.EuroTransaction?.swift} Bank Name:  ${row?.EuroTransaction?.bankName}`;
     }
 
     if (userId && destinationAddress) {
@@ -231,8 +227,24 @@ const Transactions = () => {
 
         return (
           <>
-            {isEuroSenderRow(row) ? (
-              <EuroBankBlock euro={row?.EuroTransaction} />
+            {Number(row?.operationType) === 1 && row?.assetId === "EUR" ? (
+              <div className="text-xs leading-none">
+                <p className="font-semibold">
+                  {row?.EuroTransaction?.customerName}
+                </p>
+                <p>
+                  <span className="font-semibold">IBAN: </span>
+                  {row?.EuroTransaction?.IBAN}
+                </p>
+                <p>
+                  <span className="font-semibold">BIC: </span>
+                  {row?.EuroTransaction?.swift}
+                </p>
+                <p>
+                  <span className="font-semibold">Bank Name: </span>
+                  {row?.EuroTransaction?.bankName}
+                </p>
+              </div>
             ) : (
               <>
                 {userId && sourceAddress ? (
@@ -283,8 +295,24 @@ const Transactions = () => {
 
         return (
           <>
-            {isEuroBeneficiaryRow(row) ? (
-              <EuroBankBlock euro={row?.EuroTransaction} />
+            {Number(row?.operationType) === 2 && row?.assetId === "EUR" ? (
+              <div className="text-xs leading-none">
+                <p className="font-semibold">
+                  {row?.EuroTransaction?.customerName}
+                </p>
+                <p>
+                  <span className="font-semibold">IBAN: </span>
+                  {row?.EuroTransaction?.IBAN}
+                </p>
+                <p>
+                  <span className="font-semibold">BIC: </span>
+                  {row?.EuroTransaction?.swift}
+                </p>
+                <p>
+                  <span className="font-semibold">Bank Name: </span>
+                  {row?.EuroTransaction?.bankName}
+                </p>
+              </div>
             ) : (
               <>
                 {name && destinationAddress ? (

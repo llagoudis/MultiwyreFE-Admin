@@ -2,22 +2,34 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { formatDateTime, hasEuroBankDetails } from "~/common/functions";
+import { formatDateTime } from "~/common/functions";
 import MuiButton from "~/components/common/Button";
-import { euroBankDetailsMap } from "~/components/common/EuroBankBlock";
 import HeaderLayout from "~/components/common/HeaderLayout";
-import {
-  fetchTransactionById,
-  updateTranscationStatus,
-} from "~/service/ApiRequests";
+import { fetchTransactionById } from "~/service/ApiRequests";
 import { ApiHandler } from "~/service/UtilService";
+
+// type
 
 type parameter = {
   key: string;
   value: string;
 };
 type transactiontypes = {
-  Details: Record<string, string>;
+  Details: {
+    "Transaction ID": string;
+    Type: string;
+    "Time in force": string;
+    Side: string;
+    Status: string;
+    "From currency": string;
+    "To currency": string;
+
+    Amount: string;
+    "Provider rate": string;
+    "Client rate": string;
+    "Client Volume ": string;
+    "Processed volume": string;
+  };
 
   additional: {
     ID: string;
@@ -29,12 +41,51 @@ type transactiontypes = {
   };
 };
 
+// transaction details
+const orderDetails: transactiontypes = {
+  Details: {
+    "Transaction ID": " 3422d3b1-ff9c-4857-8ff0-ff25a1782658c",
+    Type: "Market",
+    "Time in force": "GTC",
+    Side: "Ask",
+    Status: "Success",
+    "From currency": "BTC",
+    "To currency": "EUR",
+    Amount: "0.00000000012",
+    "Client rate": "0.00000000012",
+    "Provider rate": "0.00000000012",
+    "Client Volume ": " 0.00000000012",
+    "Processed volume": "0.00000000012",
+  },
+
+  additional: {
+    ID: "Kraken",
+    "Provider order ID": "OCYEMZ-NC4TP-XKRUIS",
+    Parameters: [
+      { key: "Account provider ID", value: "42" },
+      { key: "Account number", value: "42" },
+      { key: "Description", value: "Sell XBTEUR @ market " },
+      { key: "Provider fee", value: " 0.0024234" },
+      { key: "Provider volume executed", value: "0.0024234" },
+      { key: "Provider cost", value: " 0.0024234" },
+      { key: "Provider price", value: " 0.0024234" },
+    ],
+    Error: "",
+    "Created at": "30.08.2023 09:26:48 UTC",
+    "Processed At": "30.08.2023 09:26:48 UTC",
+  },
+};
+
+interface Response {
+  success: boolean;
+  body: TransactionDetails;
+}
+
 const ViewOrders = () => {
   const router = useRouter();
   const transactionId = Array.isArray(router.query.id) ? "" : router.query.id;
 
   const [transaction, setTransaction] = useState<TransactionDetails>();
-  const [busy, setBusy] = useState(false);
 
   const fetchData = async () => {
     const [res, error]: APIResult<TransactionDetails> = await ApiHandler(
@@ -43,7 +94,7 @@ const ViewOrders = () => {
     );
 
     if (error) {
-      toast.error("Failed to load order");
+      toast.error("Failed to load users");
     }
 
     if (res?.success && res?.body) {
@@ -55,62 +106,13 @@ const ViewOrders = () => {
     void fetchData();
   }, [transactionId]);
 
-  const isOtcPending =
-    transaction?.note === "OTC_TRANSACTION" &&
-    String(transaction?.status ?? "").toUpperCase() === "PENDING";
-
-  const setStatus = async (
-    status: string,
-    subStatus: string,
-    okMessage: string,
-  ) => {
-    if (!transactionId || busy) return;
-    setBusy(true);
-    try {
-      const res: any = await updateTranscationStatus(transactionId, {
-        status,
-        subStatus,
-      });
-      const ok =
-        res?.success === true ||
-        res?.data?.success === true ||
-        res?.status === 200;
-      if (!ok) {
-        toast.error("Failed to update order status");
-        return;
-      }
-      toast.success(okMessage);
-      await fetchData();
-    } catch {
-      toast.error("Failed to update order status");
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const confirmOrder = () =>
-    void setStatus(
-      "COMPLETED",
-      "CONFIRMED",
-      "OTC order confirmed — it will show as executed in Trading History",
-    );
-
-  const cancelOrder = () =>
-    void setStatus("CANCELED", "CANCELED", "OTC order canceled");
-
-  const euroBank = hasEuroBankDetails(transaction)
-    ? euroBankDetailsMap(transaction?.EuroTransaction)
-    : null;
-
   const orderDetails: transactiontypes = {
     Details: {
       "Transaction ID": transaction?.transactionId ?? "-",
-      Note: transaction?.note ?? "-",
       Type: transaction?.orderType ?? "",
       "Time in force": "-",
       Side: transaction?.TransactionFee?.type ?? "-",
       Status: transaction?.status ?? "-",
-      "Sub status": transaction?.subStatus ?? "-",
       "From currency": transaction?.assetId ?? "-",
       "To currency": transaction?.destinationAssetId ?? "-",
       Amount: transaction?.TransactionFee?.amount ?? "-",
@@ -118,7 +120,6 @@ const ViewOrders = () => {
       "Client rate": transaction?.TransactionFee?.clientRate ?? "-",
       "Client Volume ": transaction?.TransactionFee?.debitedAmount ?? "-",
       "Processed volume": transaction?.TransactionFee?.debitedAmount ?? "-",
-      ...(euroBank ?? {}),
     },
     additional: {
       ID: transaction?.transactionId ?? "-",
@@ -126,39 +127,14 @@ const ViewOrders = () => {
       Parameters: [{ key: "-", value: "-" }],
       Error: "-",
       "Created at": formatDateTime(transaction?.createdAt) ?? "-",
-      "Processed At": formatDateTime(transaction?.updatedAt) ?? "-",
+      "Processed At": formatDateTime(transaction?.createdAt) ?? "-",
     },
   };
   return (
     <div className="my-4">
       <div className=" flex items-center justify-between py-4">
         <p className="pageHeader">Exchange</p>
-        <div className="flex flex-wrap gap-2">
-          {isOtcPending ? (
-            <>
-              <MuiButton
-                className="btn-red-cancel"
-                title={busy ? "…" : "Cancel"}
-                onClick={cancelOrder}
-              />
-              <MuiButton
-                className="btn-green-completed"
-                title={busy ? "…" : "Confirm"}
-                onClick={confirmOrder}
-              />
-            </>
-          ) : null}
-          <Link href="/exchange/orders">
-            <MuiButton className="btn-outlined " title="Back" />
-          </Link>
-        </div>
       </div>
-      {isOtcPending ? (
-        <p className="mb-3 text-sm text-slate-600">
-          OTC desk order is <b>Pending</b>. Press <b>Confirm</b> after settlement
-          to mark it completed (moves out of user Pending Trading History).
-        </p>
-      ) : null}
       <div className=" grid grid-cols-2 gap-4">
         {/* column 1 */}
         <div className="flex flex-col gap-4">
@@ -179,17 +155,17 @@ const ViewOrders = () => {
           {/* Additional data */}
           <HeaderLayout name="Additional data">
             {Object.entries(orderDetails.additional).map(([key, value], i) => (
-              <React.Fragment key={key}>
+              <>
                 {!Array.isArray(value) ? (
-                  <div className=" grid grid-cols-2 ">
+                  <div key={i} className=" grid grid-cols-2 ">
                     <p className="subText py-2">{key}</p>
                     <p className="subText py-2">{value}</p>
                   </div>
                 ) : (
                   <div>
                     <p className="subText py-2">{key}</p>
-                    {value.map((item, j) => (
-                      <div key={j} className="flex">
+                    {value.map((item, i) => (
+                      <div key={i} className="flex">
                         <p>{item.key}</p>
                         &nbsp;: &nbsp;
                         <p>{item.value}</p>
@@ -197,11 +173,14 @@ const ViewOrders = () => {
                     ))}
                   </div>
                 )}
-              </React.Fragment>
+              </>
             ))}
           </HeaderLayout>
         </div>
       </div>
+      <Link href="/exchange/orders" className="flex justify-end">
+        <MuiButton className="btn-outlined " title="Back" />
+      </Link>
     </div>
   );
 };

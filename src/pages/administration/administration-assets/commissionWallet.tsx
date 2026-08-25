@@ -18,10 +18,7 @@ import { IoMdCopy } from "react-icons/io";
 import { IoArrowUpCircleOutline } from "react-icons/io5";
 import Image from "next/image";
 import { ApiHandler } from "~/service/UtilService";
-import {
-  adminCommissionWithdraw,
-  updateCommissionWalletAddress,
-} from "~/service/ApiRequests";
+import { adminCommissionWithdraw, adminWithdraw } from "~/service/ApiRequests";
 import TableComponentCommission from "./TableComponentCommission";
 import { get2FAQRCode, submit2FAOtp } from "~/service/api/auth";
 import { useAuthStore } from "~/store";
@@ -106,11 +103,6 @@ const CommissionWallet = ({ data, walletsLoading }: Props) => {
   );
   const [twofaQR, setTwofaQR] = useState<string>("");
   const { tfaEnabled } = useAuthStore((state) => state);
-  const [editing, setEditing] = useState(false);
-  const [draftAddresses, setDraftAddresses] = useState<Record<number, string>>(
-    {},
-  );
-  const [savingAddresses, setSavingAddresses] = useState(false);
 
   const {
     control,
@@ -150,49 +142,6 @@ const CommissionWallet = ({ data, walletsLoading }: Props) => {
   useEffect(() => {
     void getWallets();
   }, [getWallets]);
-
-  const startEditAddresses = () => {
-    const drafts: Record<number, string> = {};
-    wallets.forEach((w) => {
-      drafts[w.id] = w.address ?? "";
-    });
-    setDraftAddresses(drafts);
-    setEditing(true);
-  };
-
-  const cancelEditAddresses = () => {
-    setDraftAddresses({});
-    setEditing(false);
-  };
-
-  const saveAddresses = async () => {
-    const payload = wallets.map((w) => ({
-      id: w.id,
-      assetAddress: (draftAddresses[w.id] ?? w.address ?? "").trim(),
-    }));
-    if (payload.some((p) => !p.assetAddress)) {
-      toast.error("Address cannot be empty");
-      return;
-    }
-    setSavingAddresses(true);
-    const [res, error] = await ApiHandler(updateCommissionWalletAddress, {
-      wallets: payload,
-    });
-    setSavingAddresses(false);
-    if (error || !res?.success) {
-      toast.error("Failed to update commission addresses");
-      return;
-    }
-    setAdminWallets((prev) =>
-      prev.map((w) => ({
-        ...w,
-        address: draftAddresses[w.id]?.trim() ?? w.address,
-      })),
-    );
-    setEditing(false);
-    setDraftAddresses({});
-    toast.success(res?.message || "Commission addresses saved");
-  };
 
   const handleTransferClick = (wallet: AdminWallets) => {
     setSelectedWallet(wallet);
@@ -281,33 +230,16 @@ const CommissionWallet = ({ data, walletsLoading }: Props) => {
       minWidth: 410,
       headerName: "Address",
       flex: 1,
-      renderCell: (params: TableRow) =>
-        editing ? (
-          <TextField
-            size="small"
-            fullWidth
-            value={draftAddresses[params.row.id] ?? params.row.address ?? ""}
-            onChange={(e) =>
-              setDraftAddresses((prev) => ({
-                ...prev,
-                [params.row.id]: e.target.value,
-              }))
-            }
-            onClick={(e) => e.stopPropagation()}
-            inputProps={{ style: { fontSize: 13 } }}
-          />
-        ) : (
-          <div className="flex w-full items-center justify-between">
-            <p>{params?.row?.address}</p>
-            <IconButton
-              onClick={() =>
-                navigator.clipboard.writeText(params?.row?.address)
-              }
-            >
-              <IoMdCopy />
-            </IconButton>
-          </div>
-        ),
+      renderCell: (params: TableRow) => (
+        <div className="flex w-full items-center justify-between">
+          <p>{params?.row?.address}</p>
+          <IconButton
+            onClick={() => navigator.clipboard.writeText(params?.row?.address)}
+          >
+            <IoMdCopy />
+          </IconButton>
+        </div>
+      ),
     },
     {
       field: "balance",
@@ -383,46 +315,12 @@ const CommissionWallet = ({ data, walletsLoading }: Props) => {
 
       <div className="tableComponent">
         <Box sx={{ p: 3, bgcolor: "white" }}>
-          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-            <p className="text-sm text-slate-600">
-              Edit updates the stored commission receive address. Transfer still
-              signs with the existing key — change only if you intend that.
-            </p>
-            <div className="flex gap-2">
-              {editing ? (
-                <>
-                  <MuiButton
-                    title="Cancel"
-                    className="btn-outlined"
-                    onClick={cancelEditAddresses}
-                  />
-                  <MuiButton
-                    title="Save"
-                    className="btn-solid"
-                    loading={savingAddresses}
-                    onClick={() => {
-                      enforcePermission("write", () => void saveAddresses());
-                    }}
-                  />
-                </>
-              ) : (
-                <MuiButton
-                  title="Edit addresses"
-                  className="btn-outlined"
-                  onClick={() => {
-                    enforcePermission("write", startEditAddresses);
-                  }}
-                />
-              )}
-            </div>
-          </div>
           <MuiDataGrid
             rows={wallets}
             columns={columns}
             loading={walletsLoading}
             getRowId={(row) => row.id}
             autoHeight
-            rowHeight={editing ? 64 : 52}
             sx={{
               "& .MuiDataGrid-cell": {
                 borderBottom: "none",
