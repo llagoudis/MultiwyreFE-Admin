@@ -203,9 +203,6 @@ export const create_MASTER_GAS_COMMISSION_LIQUIDITY_WALLET = (
   );
 };
 
-export const fetchKrakenBalance = () =>
-  ProtectedAxiosInstance.get("transaction/kraken-balance");
-
 export const addUser = async (data: any): APIFunction<User> =>
   await ApiHandler(() => {
     const requestBody = new FormData();
@@ -352,7 +349,7 @@ export const getAllMerchantWallets = (params: FilterType) => {
 
 export const fetchEcomTransactions = (params: FilterType) => {
   return ProtectedAxiosInstance.get(
-    `getall/ecom/transactions?${convertUrlParams(params)}`,
+    `ecomtransaction/ecom/transactions?${convertUrlParams(params)}`,
   );
 };
 
