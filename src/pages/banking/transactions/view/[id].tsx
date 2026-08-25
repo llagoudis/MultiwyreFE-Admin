@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { calculatePaymentType, formatDateTime, hasEuroBankDetails } from "~/common/functions";
-import { euroBankDetailsMap } from "~/components/common/EuroBankBlock";
+import { calculatePaymentType, formatDateTime } from "~/common/functions";
 import MuiButton from "~/components/common/Button";
 import HeaderLayout from "~/components/common/HeaderLayout";
 import {
@@ -36,11 +35,6 @@ interface TransactionBody {
     Country: string;
     "Bank address": string;
     "Swift/Bic": string;
-  } | {
-    "Company Name": string;
-    IBAN: string;
-    BIC: string;
-    "Bank Name": string;
   };
 
   Beneficiary: {
@@ -200,20 +194,17 @@ const ViewTransactions = () => {
       "File2.pdf": "-",
     },
 
-    "Bank details": hasEuroBankDetails(transaction)
-      ? euroBankDetailsMap(transaction?.EuroTransaction)
-      : {
-          "Bank name": "-",
-          Country: "-",
-          "Bank address": "-",
-          "Swift/Bic": "-",
-        },
+    "Bank details": {
+      "Bank name": transaction?.EuroTransaction?.bankName ?? "-",
+      Country: transaction?.EuroTransaction?.bankCountry ?? "-",
+      "Bank address": transaction?.EuroTransaction?.bankAddress ?? "-",
+      "Swift/Bic": transaction?.EuroTransaction?.swift ?? "-",
+    },
 
     Beneficiary: {
       Name:
-        (Number(transaction?.operationType) === 2 &&
-          transaction?.assetId === "EUR") ||
-        transaction?.destinationAssetId === "EUR"
+        Number(transaction?.operationType) === 2 &&
+        transaction?.assetId === "EUR"
           ? transaction?.EuroTransaction?.customerName ?? "-"
           : nameAndAccountDestination?.name,
       Type:
@@ -222,22 +213,20 @@ const ViewTransactions = () => {
           ? `${transaction?.User?.userType === null ? "Person" : "Company"}`
           : "",
       "Account Number":
-        (Number(transaction?.operationType) === 2 &&
-          transaction?.assetId === "EUR") ||
-        transaction?.destinationAssetId === "EUR"
+        Number(transaction?.operationType) === 2 &&
+        transaction?.assetId === "EUR"
           ? transaction?.EuroTransaction?.IBAN ?? "-"
           : nameAndAccountDestination?.accountNumber,
       Currency:
         Number(transaction?.operationType) === 5
           ? `${transaction?.destinationAssetId}` ?? ""
           : `${transaction?.assetId}`,
-      Country:
-        (Number(transaction?.operationType) === 2 &&
-          transaction?.assetId === "EUR") ||
-        transaction?.destinationAssetId === "EUR"
-          ? "-"
-          : transaction?.EuroTransaction?.customerCountry ?? "-",
-      "Address Line": "",
+      Country: transaction?.EuroTransaction?.customerCountry ?? "-",
+      "Address Line":
+        Number(transaction?.operationType) === 2 &&
+        transaction?.assetId === "EUR"
+          ? transaction?.EuroTransaction?.customerAddress ?? "-"
+          : "",
     },
     Sender: {
       "Transaction Type": transaction?.OperationType?.displayName ?? "",
