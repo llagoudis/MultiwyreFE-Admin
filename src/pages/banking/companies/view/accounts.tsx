@@ -133,44 +133,87 @@ const Accounts: FC<defaultCompanyProps> = ({ data }) => {
       });
   };
 
+  const copyAddress = (addr?: string) => {
+    if (!addr) return;
+    void navigator.clipboard.writeText(addr).then(
+      () => toast.success("Address copied"),
+      () => toast.error("Copy failed"),
+    );
+  };
+
   const columns = [
-    {
-      field: "accountNumber",
-      headerName: "NUMBER",
-      flex: 1,
-      minWidth: 150,
-      renderCell: (params: { row: { accountNumber: string } }) => (
-        <Link
-          href={`/banking/accounts/view/${params?.row?.accountNumber}`}
-          className="text-blue-600 underline"
-        >
-          {params?.row?.accountNumber}
-        </Link>
-      ),
-    },
     {
       field: "status",
       headerName: "STATUS",
-      flex: 1,
-      minWidth: 130,
-      renderCell: (params: { row: { status: string } }) => (
-        <span className={findColorCode(params?.row?.status as never) ?? "p-2 font-bold"}>
-          {params?.row?.status}
-        </span>
-      ),
+      flex: 0.7,
+      minWidth: 110,
+      renderCell: (params: { row: { status: string } }) => {
+        const status = String(params?.row?.status ?? "");
+        const pending = status.toUpperCase() === "PENDING";
+        return (
+          <span
+            className={`${findColorCode(status as never) ?? "p-2 font-bold"}${
+              pending ? " rounded bg-amber-100 px-2 py-0.5" : ""
+            }`}
+          >
+            {status}
+          </span>
+        );
+      },
     },
     {
+      field: "asset",
+      headerName: "ASSET",
       flex: 1,
-      minWidth: 400,
-      field: "assetAddress",
-      headerName: "PROVIDER NUMBER",
+      minWidth: 140,
+      valueGetter: (params: { row: any }) =>
+        `${params?.row?.assetId ?? ""} ${params?.row?.Asset?.name ?? ""}`.trim(),
       renderCell: (params: { row: any }) => (
-        <p className="font-bold">{params?.row?.assetAddress}</p>
+        <div className="leading-tight">
+          <p className="font-bold text-[#1E293B]">{params?.row?.assetId ?? "—"}</p>
+          <p className="truncate text-xs text-slate-500">
+            {params?.row?.Asset?.name ?? ""}
+          </p>
+        </div>
       ),
     },
     {
-      flex: 1,
-      minWidth: 150,
+      flex: 1.6,
+      minWidth: 260,
+      field: "assetAddress",
+      headerName: "WALLET ADDRESS",
+      renderCell: (params: { row: any }) => {
+        const addr = params?.row?.assetAddress ?? "";
+        const pending =
+          String(params?.row?.status ?? "").toUpperCase() === "PENDING";
+        return (
+          <div
+            className={`flex w-full max-w-full items-start gap-2 overflow-hidden ${
+              pending ? "rounded bg-amber-50/80 px-1 py-0.5" : ""
+            }`}
+          >
+            <p className="min-w-0 flex-1 break-all font-semibold leading-snug">
+              {addr || "—"}
+            </p>
+            {addr ? (
+              <button
+                type="button"
+                className="shrink-0 rounded border border-slate-200 px-1.5 py-0.5 text-[10px] font-semibold text-slate-600 hover:bg-slate-50"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  copyAddress(addr);
+                }}
+              >
+                Copy
+              </button>
+            ) : null}
+          </div>
+        );
+      },
+    },
+    {
+      flex: 0.6,
+      minWidth: 90,
       field: "Type",
       valueGetter: (params: { row: { assetId: string } }) =>
         params?.row?.assetId === "EUR" ? "Standard" : "Crypto",
@@ -180,28 +223,10 @@ const Accounts: FC<defaultCompanyProps> = ({ data }) => {
       ),
     },
     {
-      flex: 1,
-      minWidth: 150,
-      field: "Currency",
-      headerName: "PROVIDER CURRENCY",
-      valueGetter: (params: { row: any }) => params?.row?.Asset?.name,
-
-      renderCell: (params: { row: any }) => (
-        <p className=" font-bold">{params?.row?.Asset?.name}</p>
-      ),
-    },
-    // {
-    //   flex: 1,
-    //   minWidth: 100,
-    //   field: "name",
-    //   headerName: "HOLDER",
-    //   renderCell: (params: { row: any }) => <span>{params?.row?.name}</span>,
-    // },
-    {
-      flex: 1,
-      minWidth: 100,
+      flex: 0.8,
+      minWidth: 110,
       field: "Balance",
-      headerName: "CURRENT BALANCE",
+      headerName: "BALANCE",
       valueGetter: (params: { row: any }) =>
         params?.row?.Asset?.name === "Bitcoin"
           ? parseFloat(params.row.balance).toFixed(
@@ -219,46 +244,45 @@ const Accounts: FC<defaultCompanyProps> = ({ data }) => {
       ),
     },
     {
-      flex: 1,
-      minWidth: 100,
-      field: "Provider_name",
-      headerName: "PROVIDER NAME",
-      valueGetter: () => "Fireblocks",
-      renderCell: () => <span>Fireblocks</span>,
-    },
-    {
-      flex: 1,
-      minWidth: 100,
-      field: "client_type",
-      headerName: "CLIENT TYPE",
-      renderCell: () => "User",
-      valueGetter: () => "User",
+      field: "accountNumber",
+      headerName: "NUMBER",
+      flex: 0.7,
+      minWidth: 120,
+      renderCell: (params: { row: { accountNumber: string } }) => (
+        <Link
+          href={`/banking/accounts/view/${params?.row?.accountNumber}`}
+          className="text-blue-600 underline"
+        >
+          {params?.row?.accountNumber}
+        </Link>
+      ),
     },
     {
       field: "__actions",
       headerName: "ACTIONS",
-      minWidth: 250,
+      minWidth: 200,
+      flex: 0,
       sortable: false,
       filterable: false,
       renderCell: (params: { row: { id: number | string } }) => (
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1">
           <button
-            className="rounded bg-green-500 px-2.5 py-1 text-xs font-semibold text-white hover:bg-green-600"
+            className="rounded bg-green-500 px-2 py-1 text-[11px] font-semibold text-white hover:bg-green-600"
             onClick={() => setStatus(params.row.id, "APPROVED")}
           >
             Approve
           </button>
           <button
-            className="rounded border border-red-400 px-2.5 py-1 text-xs font-semibold text-red-600 hover:bg-red-50"
+            className="rounded border border-red-400 px-2 py-1 text-[11px] font-semibold text-red-600 hover:bg-red-50"
             onClick={() => setStatus(params.row.id, "REJECTED")}
           >
             Reject
           </button>
           <button
-            className="rounded bg-red-500 px-2.5 py-1 text-xs font-semibold text-white hover:bg-red-600"
+            className="rounded bg-red-500 px-2 py-1 text-[11px] font-semibold text-white hover:bg-red-600"
             onClick={() => deleteRow(params.row.id)}
           >
-            Delete
+            Del
           </button>
         </div>
       ),
@@ -401,12 +425,18 @@ const Accounts: FC<defaultCompanyProps> = ({ data }) => {
         />
       )}
 
-      <div className="tableComponent">
-        <Box sx={{ width: "100%" }}>
+      <div className="tableComponent w-full min-w-0 overflow-x-auto">
+        <p className="mb-2 text-sm text-slate-500">
+          Holding accounts for this company. Use <b>ASSET</b> +{" "}
+          <b>WALLET ADDRESS</b> to identify the right wallet (pending rows are
+          highlighted).
+        </p>
+        <Box sx={{ width: "100%", minWidth: 0 }}>
           <MuiDataGrid
-            storageName="Accounts"
+            storageName="CompanyAccounts_v2"
             rows={userAssets}
             columns={columns}
+            wrapText
             slotProps={{
               toolbar: { csvOptions: { fileName: "Companies Accounts" } },
             }}

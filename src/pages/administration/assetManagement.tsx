@@ -11,7 +11,7 @@ import toast from "react-hot-toast";
 import CommissionWallet from "./administration-assets/commissionWallet";
 import GasWallet from "./administration-assets/gasWallet";
 import BeneficiaryDetails from "./administration-assets/BeneficiaryDetails";
-import DepositWallets from "./administration-assets/depositWallets";
+import OtcDepositAddresses from "./administration-assets/OtcDepositAddresses";
 import { enforcePermission } from "~/utils/permissions";
 
 type formData = {
@@ -152,8 +152,8 @@ const AssetManagement = () => {
     { name: "GAS", label: "Gas Wallet" },
     { name: "COMMISSION", label: "Commission Wallet" },
     { name: "BENEFICIARY", label: "Beneficiary Details" },
-    { name: "DEPOSIT", label: "Deposit Wallets" },
-    // Master / Liquidity / Kraken tabs removed per client: keep Gas + Commission only.
+    { name: "OTC_DEPOSIT", label: "OTC Deposit Addresses" },
+    // Deposit Wallets removed — same lists live under E-Commerce → Wallets.
   ];
 
   async function handleGenerateWallet(walletName: string) {
@@ -201,9 +201,9 @@ const AssetManagement = () => {
             <BeneficiaryDetails />
           </HeaderLayout>
         )}
-        {activeTab?.value === "DEPOSIT" && (
+        {activeTab?.value === "OTC_DEPOSIT" && (
           <HeaderLayout name={activeTab.label}>
-            <DepositWallets />
+            <OtcDepositAddresses />
           </HeaderLayout>
         )}
         {activeTab?.value === "GAS" && (

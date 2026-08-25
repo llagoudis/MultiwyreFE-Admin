@@ -14,6 +14,25 @@ const saveAdminBeneficiary = (
     ProtectedAxiosInstance.put("/admin/beneficiary-details", data),
   );
 
+export type AdminOtcDepositAddress = {
+  id?: number | null;
+  assetId: string;
+  address: string;
+  label?: string;
+};
+
+const fetchAdminOtcDepositAddresses = (): APIFunction<
+  AdminOtcDepositAddress[]
+> =>
+  ApiHandler(() => ProtectedAxiosInstance.get("/admin/otc-deposit-addresses"));
+
+const saveAdminOtcDepositAddresses = (data: {
+  addresses: AdminOtcDepositAddress[];
+}): APIFunction<AdminOtcDepositAddress[]> =>
+  ApiHandler(() =>
+    ProtectedAxiosInstance.put("/admin/otc-deposit-addresses", data),
+  );
+
 const createNewAdminUser = async (
   data: AdministratorUser,
 ): APIFunction<AdministratorUser> =>
@@ -40,7 +59,9 @@ export {
   createNewAdminUser,
   fetchAdministrators,
   fetchAdminBeneficiary,
+  fetchAdminOtcDepositAddresses,
   saveAdminBeneficiary,
+  saveAdminOtcDepositAddresses,
   updateAdminUser,
   deleteAdminUser,
 };
