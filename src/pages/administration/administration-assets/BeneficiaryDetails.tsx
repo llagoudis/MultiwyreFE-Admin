@@ -39,13 +39,11 @@ const SECTIONS: [string, [keyof BeneficiaryForm, string][]][] = [
     ["customerName", "Customer name"],
     ["customerAddress", "Customer address"],
     ["customerZip", "Customer ZIP code"],
-    ["destinationAddress", "Destination address"],
   ]],
   ["Banking information", [
     ["customerSwift", "Customer swift"],
     ["bankName", "Bank name"],
     ["bankAddress", "Bank address"],
-    ["bankLocation", "Bank location"],
     ["bankCountry", "Bank country"],
     ["bankReference", "Bank reference"],
   ]],
@@ -90,6 +88,11 @@ const BeneficiaryDetails = () => {
 
   return (
     <div className="mt-4 max-w-[460px] rounded border border-slate-200 bg-white">
+      <div className="border-b border-slate-100 px-4 py-2.5 text-sm text-slate-500">
+        Multiwyre EUR settlement details for User OTC when <b>From = EUR</b>.
+        Crypto OTC deposit addresses are set under{" "}
+        <b>OTC Deposit Addresses</b> (not here).
+      </div>
       <div className="px-4 py-3.5">
         {SECTIONS.map(([section, rows]) => (
           <div key={section}>
