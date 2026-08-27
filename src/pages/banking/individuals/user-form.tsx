@@ -168,7 +168,7 @@ const UserForm = () => {
 
     verificationStatus: "SUBMITTED",
     verificationLevel: 1,
-    // roles: "ex_user",
+    roles: "ex_user",
     countryCode: 1,
   };
 
@@ -1059,6 +1059,8 @@ const UserForm = () => {
                   label="Access roles"
                   name="roles"
                   valueKey="value"
+                  required={true}
+                  rules={{ required: "Access role is required" }}
                 />
                 <InputComponent
                   control={control}

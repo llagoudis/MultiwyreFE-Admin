@@ -138,7 +138,6 @@ const CreateAdministrator = () => {
                 ? "Please enter the following to edit a admin"
                 : ""
           }
-          enabled={"Enabled"}
         >
           <div className="grid grid-cols-3 gap-3">
             <InputComponent

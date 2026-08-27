@@ -43,7 +43,6 @@ const filters: filterType[] = [
   { label: "Last name", name: "last_name" },
   { label: "Email", name: "email" },
   { label: "Role", name: "role" },
-  { label: "Enabled", name: "enabled" },
   { label: "Two Factor Auth", name: "two_factor_auth" },
 ];
 
@@ -60,7 +59,6 @@ const Administrators = () => {
     "last_name",
     "email",
     "role",
-    "enabled",
     "two_factor_auth",
   ]);
 
@@ -168,13 +166,6 @@ const Administrators = () => {
         </a>
       ),
       headerName: "ROLE",
-    },
-
-    {
-      flex: 1,
-      minWidth: 150,
-      field: "active",
-      headerName: "ENABLED",
     },
 
     {
