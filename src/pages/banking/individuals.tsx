@@ -196,6 +196,25 @@ const Persons = () => {
           }}
           showInMenu
         />,
+        <GridActionsCellItem
+          key="delete"
+          label="Delete"
+          onClick={() => {
+            enforcePermission("delete", [
+              () => {
+                setDeleteAzureId(row?.azureId);
+                setOpenDialog("delete");
+              },
+            ]);
+          }}
+          sx={{
+            margin: "0 1rem",
+            padding: "5px 0",
+            width: "6rem",
+            fontSize: "14px",
+          }}
+          showInMenu
+        />,
       ],
     },
   ];
