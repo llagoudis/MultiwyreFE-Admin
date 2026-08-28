@@ -2,7 +2,7 @@ import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Router, { useRouter } from "next/router";
-import React, { Fragment, useContext, useMemo, useState } from "react";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 import { RiCloseCircleLine } from "react-icons/ri";
 import arrowdown from "~/assets/general/arrow_down.svg";
 import eCommerce from "~/assets/navicons/e-commerce.svg";
@@ -321,8 +321,6 @@ const routes: Route[] = [
 const Sidebar: React.FC = () => {
   const router = useRouter();
   const pathName = usePathname() || router.asPath;
-  const parts = pathName.split("/");
-  const firstTwoPaths = parts.slice(0, 3).join("/");
   const sidebarprop = useContext(SidebarContext);
   const admin = useGlobalStore((state) => state.admin);
 
@@ -330,65 +328,71 @@ const Sidebar: React.FC = () => {
 
   const [heading, setHeading] = useState<string | undefined>("");
 
-  const SidebarItem = ({ name, path, icon, menu, subitems }: Route) => (
-    <Link
-      href={path ? path : pathName}
-      className={` sidebar-item ${
-        heading === name && "rounded-xl bg-white/10"
-      } flex cursor-pointer justify-between p-1 px-2`}
-      onClick={(e) => {
-        if (subitems?.length) {
-          e.preventDefault();
-        }
+  const isRouteActive = (path?: string) => {
+    if (!path) return false;
+    if (path === "/") {
+      return pathName === "/" || pathName.startsWith("/banking");
+    }
+    return pathName === path || pathName.startsWith(`${path}/`);
+  };
 
-        if (heading === name) {
-          setHeading("");
-        } else {
-          setHeading(name);
-        }
-      }}
-    >
-      <div className={`group flex items-center gap-3 `}>
-        <Image
-          alt=""
-          src={icon}
-          className={`sidebar-icon ${
-            heading === name && "brightness-200"
-          } h-5 w-5 group-hover:brightness-200`}
-        />
-        <h1
-          className={` text-[#8B8D91]  ${
-            heading === name 
-          } `}
-        >
-          {name === "apipage" ? "Api" : name}
-        </h1>
-      </div>
+  const isSectionHighlighted = (
+    name: string | undefined,
+    subitems?: subitemsType[],
+  ) => {
+    if (heading === name) return true;
+    return Boolean(subitems?.some((sub) => isRouteActive(sub.path)));
+  };
 
-      {menu && (
-        <Image
-          src={arrowdown as ImageType}
-          className={`${
-            heading === name && "rotate-180"
-          }  transition-all duration-300`}
-          alt=""
-        />
-      )}
-    </Link>
-  );
+  const SidebarItem = ({ name, path, icon, menu, subitems }: Route) => {
+    const highlighted =
+      isSectionHighlighted(name, subitems) ||
+      (path !== "/" && isRouteActive(path));
 
-  const SidebarNestedItem = ({ name, path }: subitemsType) => (
-    <Link href={path} className="group flex items-center gap-3 sidebar-nested-item">
-      <h1
-        className={`p-1 text-sm font-medium text-[#8B8D91]   ${
-          firstTwoPaths === path &&
-          "rounded-md bg-white/10  font-semibold "
-        }`}
+    return (
+      <Link
+        href={path ? path : pathName}
+        className={`sidebar-item${highlighted ? " active" : ""} flex cursor-pointer justify-between p-1 px-2`}
+        onClick={(e) => {
+          if (subitems?.length) {
+            e.preventDefault();
+          }
+
+          if (heading === name) {
+            setHeading("");
+          } else {
+            setHeading(name);
+          }
+        }}
       >
-        {name}
-      </h1>
-    </Link>
-  );
+        <div className="group flex items-center gap-3">
+          <Image alt="" src={icon} className="sidebar-icon h-5 w-5" />
+          <h1 className="sidebar-item-label capitalize">{name === "apipage" ? "Api" : name}</h1>
+        </div>
+
+        {menu && (
+          <Image
+            src={arrowdown as ImageType}
+            className={`sidebar-chevron${highlighted ? " is-open" : ""}`}
+            alt=""
+          />
+        )}
+      </Link>
+    );
+  };
+
+  const SidebarNestedItem = ({ name, path }: subitemsType) => {
+    const active = isRouteActive(path);
+
+    return (
+      <Link
+        href={path}
+        className={`group flex items-center gap-3 sidebar-nested-item${active ? " active" : ""}`}
+      >
+        <h1 className="sidebar-nested-label p-1 text-sm font-medium capitalize">{name}</h1>
+      </Link>
+    );
+  };
 
   // async function fetchAdmin() {
   //   const [res, error]: APIResult<AdminProfile[]> =
@@ -404,11 +408,15 @@ const Sidebar: React.FC = () => {
   //     setAdminImage(res?.body[0]?.profileImgLink);
   //   }
 
-  useMemo(() => {
-    if (router.pathname === "/") {
-      setHeading("");
-    }
-  }, [router]);
+  useEffect(() => {
+    const activeSection = routes.find((item) =>
+      item.subitems?.some((sub) => {
+        if (sub.path === "/") return pathName === "/";
+        return pathName === sub.path || pathName.startsWith(`${sub.path}/`);
+      }),
+    );
+    setHeading(activeSection?.name ?? "");
+  }, [pathName]);
 
   return (
     <Fragment>
