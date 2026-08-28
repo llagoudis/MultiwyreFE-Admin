@@ -35,6 +35,16 @@ import {
   GridToolbarFilterButton,
 } from "@mui/x-data-grid";
 
+const hasChargedFee = (item: TransactionDetails) => {
+  const fee = item?.TransactionFee;
+  if (!fee) return false;
+  return (
+    Number(fee.feeValue) > 0 ||
+    Number(fee.exchangeFee) > 0 ||
+    Number(fee.transactionFee) > 0
+  );
+};
+
 // interface filterType {
 //   label: string;
 //   name: string;
@@ -156,12 +166,10 @@ const ChargedFees = () => {
     }
 
     if (res?.success && res.body?.data) {
-      const filterdReports = res.body?.data?.filter((item) => {
-        return Number(item?.TransactionFee?.feeValue) > 0;
-      });
+      const chargedFeeRows = res.body.data.filter(hasChargedFee);
       setPageCount(res?.body?.pagination?.totalItems);
 
-      setChargedFees(filterdReports);
+      setChargedFees(chargedFeeRows);
     }
   };
 
@@ -558,7 +566,7 @@ const ChargedFees = () => {
 
     const reportHeaderval: TransactionReport[] = [];
 
-    res?.body?.data?.map((row) => {
+    res?.body?.data?.filter(hasChargedFee).map((row) => {
       const { id, createdAt, alert, assetId } = row;
       reportHeaderval.push({
         ID: id,
