@@ -28,6 +28,15 @@ const Topbar: React.FC = () => {
     return result;
   }
 
+  const splitCamelCase = (str: string) => {
+    return str.replace(/([a-z])([A-Z])/g, "$1 $2");
+  };
+
+  const formatBreadcrumbLabel = (segment: string) => {
+    if (segment.toLowerCase() === "banking") return "Management";
+    return splitCamelCase(segment);
+  };
+
   useEffect(() => {
     const refineBreadcrumb = (pathSegments: string[]): string[] => {
       const bankingKeywords = [
@@ -35,8 +44,6 @@ const Topbar: React.FC = () => {
         "currencyTurnover",
         "fees",
         "chargedFees",
-        "balances",
-        "totalBalances",
       ];
       const eComKeywords = ["ecomFees", "ecomChargedFees", "merchantTurnover"];
       if (pathName.includes("companies") && pathName.includes("view")) {
@@ -69,7 +76,7 @@ const Topbar: React.FC = () => {
       } else if (
         bankingKeywords.some((keyword) => pathName.includes(keyword))
       ) {
-        pathSegments.splice(1, 0, "Banking");
+        pathSegments.splice(1, 0, "Management");
       }
       return pathSegments;
     };
@@ -83,10 +90,6 @@ const Topbar: React.FC = () => {
 
   const makePath = (array: string[], index: number) => {
     return "/" + array.slice(0, index).join("/");
-  };
-
-  const splitCamelCase = (str: string) => {
-    return str.replace(/([a-z])([A-Z])/g, "$1 $2");
   };
 
   return (
@@ -125,10 +128,10 @@ const Topbar: React.FC = () => {
                   {index === 0 ||
                   segment.toLowerCase() === "view" ||
                   segment === "E-Commerce" ||
-                  segment === "Banking" ||
+                  segment === "Management" ||
                   "merchantTurnover" ||
                   "allTransactions" ? (
-                    <span>{splitCamelCase(segment)}</span>
+                    <span>{formatBreadcrumbLabel(segment)}</span>
                   ) : (
                     <>
                       <Link

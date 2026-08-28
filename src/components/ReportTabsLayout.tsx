@@ -17,10 +17,6 @@ const ReportTabsLayout = ({ children }: Props) => {
       return 2;
     } else if (pathname === "/reports/chargedFees") {
       return 3;
-    } else if (pathname === "/reports/balances") {
-      return 4;
-    } else if (pathname === "/reports/totalBalances") {
-      return 5;
     }
     return 0;
   });
@@ -29,7 +25,6 @@ const ReportTabsLayout = ({ children }: Props) => {
     setValue(newValue);
   };
 
-  // page Navigation
   const handleNavigate = (path: string) => {
     router
       .push(path)
@@ -37,7 +32,6 @@ const ReportTabsLayout = ({ children }: Props) => {
         // The navigation was successful
       })
       .catch((error) => {
-        // Handle any errors that occur during navigation
         console.error(error);
       });
   };
@@ -102,20 +96,6 @@ const ReportTabsLayout = ({ children }: Props) => {
               }}
               label="Charged Fees"
               {...a11yProps(3)}
-            />
-            <Tab
-              onClick={() => {
-                handleNavigate("/reports/balances");
-              }}
-              label="Balances"
-              {...a11yProps(4)}
-            />
-            <Tab
-              onClick={() => {
-                handleNavigate("/reports/totalBalances");
-              }}
-              label="Total Balances"
-              {...a11yProps(5)}
             />
           </Tabs>
         </Box>

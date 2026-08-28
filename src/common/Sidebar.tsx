@@ -37,6 +37,12 @@ interface Route {
   subitems?: subitemsType[];
 }
 
+const formatNavLabel = (name?: string) => {
+  if (name === "banking") return "Management";
+  if (name === "apipage") return "Api";
+  return name ?? "";
+};
+
 // routes array
 const routes: Route[] = [
   {
@@ -367,7 +373,7 @@ const Sidebar: React.FC = () => {
       >
         <div className="group flex items-center gap-3">
           <Image alt="" src={icon} className="sidebar-icon h-5 w-5" />
-          <h1 className="sidebar-item-label capitalize">{name === "apipage" ? "Api" : name}</h1>
+          <h1 className="sidebar-item-label capitalize">{formatNavLabel(name)}</h1>
         </div>
 
         {menu && (
@@ -389,7 +395,7 @@ const Sidebar: React.FC = () => {
         href={path}
         className={`group flex items-center gap-3 sidebar-nested-item${active ? " active" : ""}`}
       >
-        <h1 className="sidebar-nested-label p-1 text-sm font-medium capitalize">{name}</h1>
+        <h1 className="sidebar-nested-label p-1 text-sm font-medium capitalize">{formatNavLabel(name)}</h1>
       </Link>
     );
   };
