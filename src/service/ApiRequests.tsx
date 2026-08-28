@@ -175,12 +175,6 @@ export const fetchChargedFees = (params: FilterType) => {
   );
 };
 
-export const fetchDailyUserBalances = (params: FilterType) => {
-  return ProtectedAxiosInstance.get(
-    `transaction/userDailyBalance?${convertUrlParams(params)}`,
-  );
-};
-
 export const fetchTransactionById = (id: any) =>
   ProtectedAxiosInstance.get(`transaction/reports/${id}`);
 

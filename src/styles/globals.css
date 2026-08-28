@@ -170,8 +170,9 @@ button[aria-selected="true"] {
 
 /* Hover and active state for sidebar items */
 .sidebar-item:hover,
-.sidebar-nested-item:hover
-{
+.sidebar-nested-item:hover,
+.sidebar-item.active,
+.sidebar-nested-item.active {
   background: linear-gradient(90deg, #4C7FFF 0%, #DB33A1 100%) !important;
   color: #ffffff !important;
   border-radius: 10px !important;
@@ -179,8 +180,7 @@ button[aria-selected="true"] {
 
 .sidebar-item.active,
 .sidebar-nested-item.active {
-  color: #000000 !important;
-  border-radius: 10px !important;
+  color: #ffffff !important;
 }
 
 /* Make nested item text appear white when hovered */
@@ -189,6 +189,32 @@ button[aria-selected="true"] {
   transition: all 200ms ease-in-out;
   border-radius: 10px;
   padding: 2px;
+}
+
+.sidebar-item-label,
+.sidebar-nested-label {
+  color: #8b8d91;
+  transition: color 200ms ease-in-out;
+}
+
+.sidebar-item:hover .sidebar-item-label,
+.sidebar-item.active .sidebar-item-label,
+.sidebar-nested-item:hover .sidebar-nested-label,
+.sidebar-nested-item.active .sidebar-nested-label {
+  color: #ffffff !important;
+}
+
+.sidebar-chevron {
+  transition: transform 200ms ease-in-out, filter 200ms ease-in-out;
+}
+
+.sidebar-item:hover .sidebar-chevron,
+.sidebar-item.active .sidebar-chevron {
+  filter: brightness(0) invert(1);
+}
+
+.sidebar-chevron.is-open {
+  transform: rotate(180deg);
 }
 
 /* Ensure images/icons brighten on hover */
@@ -200,7 +226,7 @@ button[aria-selected="true"] {
 .sidebar-nested-item:hover .sidebar-icon,
 .sidebar-item.active .sidebar-icon,
 .sidebar-nested-item.active .sidebar-icon {
-  filter: brightness(1.6) !important;
+  filter: brightness(0) invert(1) !important;
 }
 
 /* Mobile sidebar overrides */
