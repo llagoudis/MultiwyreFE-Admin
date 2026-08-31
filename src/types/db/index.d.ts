@@ -411,6 +411,7 @@ interface Company {
   reasonForRejection: string;
   createdAt: string;
   updatedAt: string;
+  deletedAt?: string | null;
   User: User;
   priceList: number;
   CompanyEntityInfo: CompanyEntityInfo;
