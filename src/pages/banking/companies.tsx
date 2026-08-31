@@ -19,7 +19,7 @@ import MuiButton from "~/components/common/Button";
 import Link from "next/link";
 import FilterComponent from "~/components/common/FilterComponent";
 import { verificationLevels } from "~/data/country";
-import { fetchPaginateCompanies, getAllCompanies, restoreCompany } from "~/service/api/company";
+import { fetchPaginateCompanies, getAllCompanies } from "~/service/api/company";
 import {
   Debounce,
   ExportCsv,
@@ -123,13 +123,6 @@ const Companies = () => {
     }
   };
 
-  const handleRestore = async (companyId: number) => {
-    const [res, err] = await restoreCompany(companyId);
-    if (err) return;
-    toast.success(res?.message ?? "Company restored");
-    void getCompanies(buildParamsQuery());
-  };
-
   const handleNavigate = (path: string) => {
     router
       .push(path)
@@ -143,24 +136,6 @@ const Companies = () => {
 
   const columns = [
     { field: "id", headerName: "CLIENT ID", minWidth: 110, hideable: false },
-    {
-      field: "recordStatus",
-      headerName: "STATUS",
-      minWidth: 120,
-      valueGetter: (params: { row: companies }) =>
-        params.row.deletedAt ? "DELETED" : "ACTIVE",
-      renderCell: ({ row }: TableRow) => (
-        <span
-          className={
-            row.deletedAt
-              ? "rounded bg-red-100 px-2 py-0.5 font-semibold text-red-700"
-              : "rounded bg-green-100 px-2 py-0.5 font-semibold text-green-700"
-          }
-        >
-          {row.deletedAt ? "DELETED" : "ACTIVE"}
-        </span>
-      ),
-    },
     {
       field: "companyName",
       headerName: "NAME",
@@ -272,82 +247,54 @@ const Companies = () => {
       field: "actions",
       type: "actions",
       headerName: "ACTIONS ",
-      getActions: ({ row }: TableRow) => {
-        const isDeleted = Boolean(row.deletedAt);
-        const actions = [
-          <GridActionsCellItem
-            key="view"
-            onClick={() => {
-              handleNavigate(`/banking/companies/view/${row.id}`);
-            }}
-            sx={{
-              margin: "0 1rem",
-              padding: "5px 0",
-              borderBottom: "1px solid #cdcdcd",
-              width: "6rem",
-              fontSize: "14px",
-            }}
-            label="View"
-            showInMenu
-          />,
-        ];
-
-        if (!isDeleted) {
-          actions.push(
-            <GridActionsCellItem
-              key="edit"
-              onClick={() =>
-                handleNavigate(`/banking/companies/company-form?id=${row.id}`)
-              }
-              label="Edit"
-              showInMenu
-              sx={{
-                margin: "0 1rem",
-                padding: "5px 0",
-                width: "6rem",
-                fontSize: "14px",
-              }}
-            />,
-            <GridActionsCellItem
-              key="delete"
-              label="Delete"
-              onClick={() => {
-                enforcePermission("delete", [
-                  () => toggleDelete(String(row.id)),
-                ]);
-              }}
-              showInMenu
-              sx={{
-                margin: "0 1rem",
-                padding: "5px 0",
-                color: "#FF0000",
-                width: "6rem",
-                fontSize: "14px",
-              }}
-            />,
-          );
-        } else {
-          actions.push(
-            <GridActionsCellItem
-              key="restore"
-              label="Restore"
-              onClick={() => {
-                void handleRestore(row.id);
-              }}
-              showInMenu
-              sx={{
-                margin: "0 1rem",
-                padding: "5px 0",
-                color: "#15803d",
-                width: "6rem",
-                fontSize: "14px",
-              }}
-            />,
-          );
-        }
-
-        return actions;
-      },
+      getActions: ({ row }: TableRow) => [
+        <GridActionsCellItem
+          key="view"
+          onClick={() => {
+            handleNavigate(`/banking/companies/view/${row.id}`);
+          }}
+          sx={{
+            margin: "0 1rem",
+            padding: "5px 0",
+            borderBottom: "1px solid #cdcdcd",
+            width: "6rem",
+            fontSize: "14px",
+          }}
+          label="View"
+          showInMenu
+        />,
+        <GridActionsCellItem
+          key="edit"
+          onClick={() =>
+            handleNavigate(`/banking/companies/company-form?id=${row.id}`)
+          }
+          label="Edit"
+          showInMenu
+          sx={{
+            margin: "0 1rem",
+            padding: "5px 0",
+            width: "6rem",
+            fontSize: "14px",
+          }}
+        />,
+        <GridActionsCellItem
+          key="delete"
+          label="Delete"
+          onClick={() => {
+            enforcePermission("delete", [
+              () => toggleDelete(String(row.id)),
+            ]);
+          }}
+          showInMenu
+          sx={{
+            margin: "0 1rem",
+            padding: "5px 0",
+            color: "#FF0000",
+            width: "6rem",
+            fontSize: "14px",
+          }}
+        />,
+      ],
     },
   ];
 
@@ -393,7 +340,6 @@ const Companies = () => {
 
       reportHeaderval.push({
         "CLIENT ID": id,
-        STATUS: row.deletedAt ? "DELETED" : "ACTIVE",
         NAME: row?.companyName,
         OWNER: `${row?.User?.firstname || ""} ${row?.User?.lastname || ""}`,
         "VERIFICATION STATUS": row?.verificationStatus,

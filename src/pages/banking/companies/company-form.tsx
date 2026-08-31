@@ -259,7 +259,8 @@ const CompanyForm = () => {
         return {
           ...filteredValue,
           companyId,
-          // priceList: nextValues.priceList,
+          priceList: nextValues.priceList,
+          limitList: nextValues.limitList,
           roles: nextValues?.UserCompanyAssociations[0]?.User?.roles,
           countryCode: nextValues.countryCode ?? 1,
         };
