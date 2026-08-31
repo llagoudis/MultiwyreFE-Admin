@@ -96,6 +96,11 @@ const changeCompanyVerification = async (
     ProtectedAxiosInstance.put(`/company/action/${id}`, { status }),
   );
 
+export const restoreCompany = async (
+  id: string | number,
+): APIFunction<{ id: number }> =>
+  await ApiHandler(() => ProtectedAxiosInstance.put(`/company/restore/${id}`));
+
 export {
   getAllCompanies,
   getCompanyById,

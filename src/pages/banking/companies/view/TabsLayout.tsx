@@ -1,9 +1,11 @@
 import React, { lazy, useState, useEffect, Suspense } from "react";
 import { Box, Tab, Tabs } from "@mui/material";
 import { useRouter } from "next/router";
-import { getCompanyById } from "~/service/api/company";
+import { getCompanyById, restoreCompany } from "~/service/api/company";
 import Loading from "~/components/common/PageLoaderFallback";
 import { useCompanyStore } from "~/store";
+import toast from "react-hot-toast";
+import MuiButton from "~/components/common/Button";
 
 const View = lazy(() => import("./view"));
 const Documents = lazy(() => import("./documents"));
@@ -90,13 +92,31 @@ const CompanyTabsLayout = () => {
 
   const Component = TabRoutes[value]!.component;
 
+  const handleRestore = async () => {
+    const [res, err] = await restoreCompany(companyId);
+    if (err) return;
+    toast.success(res?.message ?? "Company restored");
+    void getCompanyById(companyId);
+  };
+
   if (companyData.company.id !== parseInt(companyId)) {
     return <Loading />;
   }
 
+  const isArchived = Boolean(companyData.company.deletedAt);
+
   return (
     <Suspense fallback={<Loading />}>
       <div className="flex flex-col gap-3">
+        {isArchived ? (
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+            <p>
+              This company is archived and hidden from the Companies list. Restore
+              it to make it visible and editable again.
+            </p>
+            <MuiButton title="Restore company" onClick={handleRestore} />
+          </div>
+        ) : null}
         <Box
           sx={{
             marginTop: "1rem",

@@ -19,7 +19,7 @@ import MuiButton from "~/components/common/Button";
 import Link from "next/link";
 import FilterComponent from "~/components/common/FilterComponent";
 import { verificationLevels } from "~/data/country";
-import { fetchPaginateCompanies, getAllCompanies } from "~/service/api/company";
+import { fetchPaginateCompanies, getAllCompanies, restoreCompany } from "~/service/api/company";
 import {
   Debounce,
   ExportCsv,
@@ -73,14 +73,11 @@ const Companies = () => {
   };
 
   const onDeleteConfirm = () => {
-    // setCompanies((prev) => {
-    //   const nextState = [...prev];
-    //   const idx = nextState.findIndex(
-    //     (item) => String(item.id) === currentDelete,
-    //   );
-    //   nextState.splice(idx, 1);
-    //   return nextState;
-    // });
+    void getCompanies(buildParamsQuery());
+    toggleDelete();
+  };
+
+  const buildParamsQuery = (): FilterType => {
     const paramsQuery: FilterType = {
       pageSize: pagination.pageSize,
       pageNumber: pagination.page + 1,
@@ -89,12 +86,50 @@ const Companies = () => {
     if (sort) paramsQuery.field = sort.field;
     if (sort) paramsQuery.sort = sort.sort;
 
-    void getCompanies(paramsQuery);
+    if (filterModel && filterModel.items.length > 0) {
+      filterModel.items.forEach((filter) => {
+        if (filter.value) {
+          paramsQuery[filter.field] = filter.value;
+        }
+      });
+    }
 
-    toggleDelete();
+    return paramsQuery;
   };
 
-  // page Navigation
+  const [tableLoading, setTableLoading] = useState(false);
+
+  const getCompanies = async (data: FilterType) => {
+    setTableLoading(true);
+
+    const [res, error]: APIResult<{
+      data: companies[];
+      pagination: Pagination;
+    }> = await ApiHandler(fetchPaginateCompanies, data);
+
+    setTableLoading(false);
+    if (error) {
+      toast.error(
+        typeof error === "string" ? error : "Failed to load companies",
+      );
+      setCompanies([]);
+      setPageCount(0);
+      return;
+    }
+
+    if (res?.success && res.body?.data) {
+      setCompanies(res.body?.data);
+      setPageCount(res?.body?.pagination?.totalItems);
+    }
+  };
+
+  const handleRestore = async (companyId: number) => {
+    const [res, err] = await restoreCompany(companyId);
+    if (err) return;
+    toast.success(res?.message ?? "Company restored");
+    void getCompanies(buildParamsQuery());
+  };
+
   const handleNavigate = (path: string) => {
     router
       .push(path)
@@ -103,13 +138,29 @@ const Companies = () => {
       })
       .catch((error) => {
         console.log("error: ", error);
-        // Handle any errors that occur during navigation
       });
   };
 
-  // columns
   const columns = [
     { field: "id", headerName: "CLIENT ID", minWidth: 110, hideable: false },
+    {
+      field: "recordStatus",
+      headerName: "STATUS",
+      minWidth: 120,
+      valueGetter: (params: { row: companies }) =>
+        params.row.deletedAt ? "DELETED" : "ACTIVE",
+      renderCell: ({ row }: TableRow) => (
+        <span
+          className={
+            row.deletedAt
+              ? "rounded bg-red-100 px-2 py-0.5 font-semibold text-red-700"
+              : "rounded bg-green-100 px-2 py-0.5 font-semibold text-green-700"
+          }
+        >
+          {row.deletedAt ? "DELETED" : "ACTIVE"}
+        </span>
+      ),
+    },
     {
       field: "companyName",
       headerName: "NAME",
@@ -221,98 +272,89 @@ const Companies = () => {
       field: "actions",
       type: "actions",
       headerName: "ACTIONS ",
-      getActions: ({ row }: TableRow) => [
-        <GridActionsCellItem
-          key="view"
-          onClick={() => {
-            handleNavigate(`/banking/companies/view/${row.id}`);
-          }}
-          sx={{
-            margin: "0 1rem",
-            padding: "5px 0",
-            borderBottom: "1px solid #cdcdcd",
-            width: "6rem",
-            fontSize: "14px",
-          }}
-          label="View"
-          showInMenu
-        />,
-        <GridActionsCellItem
-          key="edit"
-          onClick={() =>
-            handleNavigate(`/banking/companies/company-form?id=${row.id}`)
-          }
-          label="Edit"
-          showInMenu
-          sx={{
-            margin: "0 1rem",
-            padding: "5px 0",
-            width: "6rem",
-            fontSize: "14px",
-          }}
-        />,
+      getActions: ({ row }: TableRow) => {
+        const isDeleted = Boolean(row.deletedAt);
+        const actions = [
+          <GridActionsCellItem
+            key="view"
+            onClick={() => {
+              handleNavigate(`/banking/companies/view/${row.id}`);
+            }}
+            sx={{
+              margin: "0 1rem",
+              padding: "5px 0",
+              borderBottom: "1px solid #cdcdcd",
+              width: "6rem",
+              fontSize: "14px",
+            }}
+            label="View"
+            showInMenu
+          />,
+        ];
 
-        <GridActionsCellItem
-          key="delete"
-          label="Delete"
-          onClick={() => {
-            enforcePermission("delete", [() => toggleDelete(String(row.id))]);
-          }}
-          showInMenu
-          sx={{
-            margin: "0 1rem",
-            padding: "5px 0",
-            color: "#FF0000",
-            width: "6rem",
-            fontSize: "14px",
-          }}
-        />,
-      ],
+        if (!isDeleted) {
+          actions.push(
+            <GridActionsCellItem
+              key="edit"
+              onClick={() =>
+                handleNavigate(`/banking/companies/company-form?id=${row.id}`)
+              }
+              label="Edit"
+              showInMenu
+              sx={{
+                margin: "0 1rem",
+                padding: "5px 0",
+                width: "6rem",
+                fontSize: "14px",
+              }}
+            />,
+            <GridActionsCellItem
+              key="delete"
+              label="Delete"
+              onClick={() => {
+                enforcePermission("delete", [
+                  () => toggleDelete(String(row.id)),
+                ]);
+              }}
+              showInMenu
+              sx={{
+                margin: "0 1rem",
+                padding: "5px 0",
+                color: "#FF0000",
+                width: "6rem",
+                fontSize: "14px",
+              }}
+            />,
+          );
+        } else {
+          actions.push(
+            <GridActionsCellItem
+              key="restore"
+              label="Restore"
+              onClick={() => {
+                void handleRestore(row.id);
+              }}
+              showInMenu
+              sx={{
+                margin: "0 1rem",
+                padding: "5px 0",
+                color: "#15803d",
+                width: "6rem",
+                fontSize: "14px",
+              }}
+            />,
+          );
+        }
+
+        return actions;
+      },
     },
   ];
-
-  const [tableLoading, setTableLoading] = useState(false);
-
-  const getCompanies = async (data: FilterType) => {
-    setTableLoading(true);
-
-    const [res, error]: APIResult<{
-      data: companies[];
-      pagination: Pagination;
-    }> = await ApiHandler(fetchPaginateCompanies, data);
-
-    setTableLoading(false);
-    if (error) {
-      // handleClear();
-      // toast.error("Failed to load companies");
-    }
-
-    if (res?.success && res.body?.data) {
-      setCompanies(res.body?.data);
-      setPageCount(res?.body?.pagination?.totalItems);
-    }
-  };
 
   const isFilterModelHasValue = filterModel?.items?.find((item) => item.value);
 
   useEffect(() => {
-    const paramsQuery: FilterType = {
-      pageSize: pagination.pageSize,
-      pageNumber: pagination.page + 1,
-    };
-
-    if (sort) paramsQuery.field = sort.field;
-    if (sort) paramsQuery.sort = sort.sort;
-
-    if (filterModel && filterModel.items.length > 0) {
-      filterModel.items.forEach((filter) => {
-        if (filter.value) {
-          paramsQuery[filter.field] = filter.value;
-        }
-      });
-    }
-
-    void getCompanies(paramsQuery);
+    void getCompanies(buildParamsQuery());
   }, [pagination, sort, isFilterModelHasValue]);
 
   async function handleExport() {
@@ -351,6 +393,7 @@ const Companies = () => {
 
       reportHeaderval.push({
         "CLIENT ID": id,
+        STATUS: row.deletedAt ? "DELETED" : "ACTIVE",
         NAME: row?.companyName,
         OWNER: `${row?.User?.firstname || ""} ${row?.User?.lastname || ""}`,
         "VERIFICATION STATUS": row?.verificationStatus,
