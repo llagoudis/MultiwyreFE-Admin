@@ -1,6 +1,5 @@
-import React, { useState, Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { useRouter } from "next/router";
-import { useAuthStore } from "~/store";
 import { useForm } from "react-hook-form";
 import Button from "~/components/common/Button";
 import toast, { Toaster } from "react-hot-toast";
@@ -9,6 +8,8 @@ import ErrorResponse from "~/service/ErrorResponse";
 import localStorageService from "~/service/LocalstorageService";
 import InputComponent from "../common/InputComponent";
 import { decryptResponse } from "~/common/functions";
+import { saveAdminPreAuthSession } from "~/service/api/auth";
+import { useAuthStore } from "~/store";
 
 interface FormData {
   email: string;
@@ -35,36 +36,50 @@ const LoginForm: React.FC = () => {
 
     setIsLoading(true);
     try {
-      const res_en: { data: { body: AuthBody; success?: boolean } } =
-        await login({
-          email: email,
-          password,
-          type: "admin",
-        });
+      const res_en: {
+        data: {
+          body: AuthBody & {
+            preAuthToken?: string;
+            requires2FASetup?: boolean;
+          };
+          success?: boolean;
+          message?: string;
+        };
+      } = await login({
+        email: email,
+        password,
+        type: "admin",
+      });
 
       const res = decryptResponse(res_en.data);
 
-      const { email: adminEmail, firstname, lastname } = res.body;
+      if (res?.success && res.body?.preAuthToken) {
+        saveAdminPreAuthSession(
+          res.body.preAuthToken,
+          Boolean(res.body.requires2FASetup),
+        );
+        toast.success(res.message ?? "Continue with Google Authenticator");
+        if (res.body.requires2FASetup) {
+          void router.push("/auth/setup-2fa");
+        } else {
+          void router.push("/auth/verify-2fa");
+        }
+        return;
+      }
 
-      const adminData = {
-        adminEmail,
-        firstname,
-        lastname,
-      };
-
-      if (res?.success) {
+      if (res?.success && res.body?.token) {
         useAuthStore.setState(res?.body);
         localStorageService.encodeAuthBody(res?.body);
         localStorageService.setLocalAccessToken(res?.body?.token);
-
         toast.success("Login successful");
         void router.push("/");
       }
     } catch (error) {
       const message = ErrorResponse(error);
-      setIsLoading(false);
       resetField("password");
       toast.error(message);
+    } finally {
+      setIsLoading(false);
     }
   };
 

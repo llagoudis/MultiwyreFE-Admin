@@ -49,6 +49,9 @@ interface AdministratorUsersType {
   active: boolean;
   accessRoles: AccessRoles;
   azureId?: string;
+  tfaEnabled?: boolean;
+  tfaSetupRequired?: boolean;
+  twoFactorStatus?: string;
 }
 
 interface globalStoreType {
