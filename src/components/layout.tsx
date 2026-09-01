@@ -17,7 +17,12 @@ type Props = {
   children: ReactNode;
 };
 
-const routesArray = ["/auth/login", "/auth/signup"];
+const routesArray = [
+  "/auth/login",
+  "/auth/signup",
+  "/auth/setup-2fa",
+  "/auth/verify-2fa",
+];
 
 const Layout = ({ children }: Props) => {
   const [tabName, setTabName] = useState<string>("CRM Admin");

@@ -11,38 +11,63 @@ import toast, { Toaster } from "react-hot-toast";
 import dynamic from "next/dynamic";
 import { roleRestrictions } from "~/utils/permissions";
 
+const AUTH_ROUTES = new Set([
+  "/",
+  "/auth/signup",
+  "/auth/login",
+  "/auth/setup-2fa",
+  "/auth/verify-2fa",
+]);
+
+const TWO_FA_ROUTES = new Set(["/auth/setup-2fa", "/auth/verify-2fa"]);
+
 const MyApp: AppType = ({ Component, pageProps }) => {
   const { token, roleId } = useAuthStore((state) => state);
   const router = useRouter();
-  const currentPath = window.location.pathname;
-  useEffect(() => {
-    const unprotectedRoutes = ["/", "/auth/signup", "/auth/login"];
 
-    if (
-      token &&
-      unprotectedRoutes.some((item) => window.location.pathname === item)
-    ) {
-      void router.push("/");
-    } else {
-      !token && void router.push("/auth/login");
+  useEffect(() => {
+    if (!router.isReady) return;
+
+    const path = router.pathname;
+    const isAuthRoute = AUTH_ROUTES.has(path);
+    const is2FAFlow = TWO_FA_ROUTES.has(path);
+    const preAuthToken = sessionStorage.getItem("preAuthToken");
+
+    if (token && isAuthRoute && !is2FAFlow) {
+      void router.replace("/");
+      return;
+    }
+
+    if (!token && !preAuthToken && !isAuthRoute) {
+      void router.replace("/auth/login");
+      return;
+    }
+
+    if (!token && preAuthToken) {
+      if (path === "/auth/login" || path === "/") {
+        const setup = sessionStorage.getItem("requires2FASetup") === "true";
+        void router.replace(setup ? "/auth/setup-2fa" : "/auth/verify-2fa");
+        return;
+      }
+      if (!isAuthRoute) {
+        void router.replace("/auth/login");
+        return;
+      }
     }
 
     void getUserIp();
 
     if (token) {
       const restrictedRoutes = roleRestrictions[roleId] ?? [];
-      if (restrictedRoutes.some((route) => currentPath.startsWith(route))) {
+      if (restrictedRoutes.some((route) => path.startsWith(route))) {
         toast.error("Permission Denied!", {
           duration: 3000,
           position: "top-center",
         });
         void router.back();
-        return;
       }
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [router.isReady, router.pathname, token, roleId]);
 
   useEffect(() => {
     const handleRouteChangeStart = (url: string) => {
@@ -53,7 +78,6 @@ const MyApp: AppType = ({ Component, pageProps }) => {
           position: "top-center",
         });
         router.events.emit("routeChangeError");
-        // Prevent route change
         throw "Permission Denied";
       }
     };
@@ -63,7 +87,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
     return () => {
       router.events.off("routeChangeStart", handleRouteChangeStart);
     };
-  }, [router]);
+  }, [router, roleId, token]);
 
   return (
     <Fragment>
@@ -77,5 +101,4 @@ const MyApp: AppType = ({ Component, pageProps }) => {
   );
 };
 
-// export default MyApp;
 export default dynamic(() => Promise.resolve(MyApp), { ssr: false });

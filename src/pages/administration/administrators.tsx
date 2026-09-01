@@ -171,8 +171,18 @@ const Administrators = () => {
     {
       flex: 1,
       minWidth: 150,
-      field: "two_factor_auth",
+      field: "twoFactorStatus",
       headerName: "TWO FACTOR AUTH",
+      renderCell: ({ row }: TableRow) => {
+        const status = row.twoFactorStatus ?? "Not set";
+        const color =
+          status === "Enabled"
+            ? "text-green-700"
+            : status === "Pending"
+              ? "text-amber-700"
+              : "text-red-600";
+        return <span className={`font-semibold ${color}`}>{status}</span>;
+      },
     },
 
     {

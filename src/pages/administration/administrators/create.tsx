@@ -15,6 +15,8 @@ import checkicon from "~/assets/general/check-one.svg";
 import DailogBox from "~/components/common/DailogBox";
 import Image, { type StaticImageData } from "next/image";
 import Button from "~/components/common/Button";
+import TwoFA from "~/components/TwoFA";
+import { useAuthStore } from "~/store";
 
 type FormData = {
   firstname: string;
@@ -40,11 +42,21 @@ const CreateAdministrator = () => {
   const [accessRoles] = useAsyncMasterStore("accessRoles");
   const [loading, setLoading] = useState<boolean>(false);
   const [openDialog, setOpenDialog] = useState<boolean>(false);
+  const [show2FA, setShow2FA] = useState<boolean>(false);
+  const [pendingFormValues, setPendingFormValues] = useState<FormData | null>(
+    null,
+  );
+  const { tfaEnabled } = useAuthStore((state) => state);
 
   const { query } = router;
 
   const onSubmit = async (values: FormData) => {
-    setLoading(true);
+    if (!tfaEnabled) {
+      toast.error(
+        "Two-factor authentication must be enabled before creating or editing admins.",
+      );
+      return;
+    }
 
     const ipAddress = await fetch("https://api.ipify.org?format=json");
     const res = await ipAddress.json();
@@ -53,6 +65,16 @@ const CreateAdministrator = () => {
       values = { ipAddress: res.ip, ...values };
     }
 
+    setPendingFormValues(values);
+    setShow2FA(true);
+  };
+
+  const on2FASubmit = async () => {
+    if (!pendingFormValues) return;
+
+    setLoading(true);
+    const values = pendingFormValues;
+
     if (query?.from === "create") {
       const [response, err] = await createNewAdminUser(values);
 
@@ -60,6 +82,8 @@ const CreateAdministrator = () => {
         toast.error("Failed to add admin user!!");
       }
       if (response?.success) {
+        setShow2FA(false);
+        setPendingFormValues(null);
         setOpenDialog(true);
       }
     } else {
@@ -77,6 +101,8 @@ const CreateAdministrator = () => {
         toast.error("Failed to update admin user!!");
       }
       if (response?.success) {
+        setShow2FA(false);
+        setPendingFormValues(null);
         setOpenDialog(true);
       }
     }
@@ -302,7 +328,7 @@ const CreateAdministrator = () => {
           <p>
             {userId
               ? "The admin user details was successfully updated"
-              : "The new admin user creation was successfull"}
+              : "The new admin user was created. They must set up Google Authenticator on first login."}
           </p>
 
           <Button
@@ -312,6 +338,17 @@ const CreateAdministrator = () => {
           />
         </div>
       </DailogBox>
+
+      {show2FA && (
+        <TwoFA
+          onClose={() => {
+            setShow2FA(false);
+            setPendingFormValues(null);
+          }}
+          loading={loading}
+          onSubmit={on2FASubmit}
+        />
+      )}
     </>
   );
 };
