@@ -1,4 +1,4 @@
-import { MenuItem, Select, type SelectProps } from "@mui/material";
+import { MenuItem, Select } from "@mui/material";
 import { type FC } from "react";
 import { Controller } from "react-hook-form";
 
@@ -33,6 +33,19 @@ const SelectComponent: FC<InputProps> = ({
   disabled,
   ...props
 }) => {
+  const getOptionValue = (option: optionType, index: number) => {
+    if (valueKey) {
+      return option[valueKey];
+    }
+    return option.value ?? index;
+  };
+
+  const getOptionText = (option: optionType) => {
+    if (getOptionLabel) return getOptionLabel(option);
+    if (labelKey) return option[labelKey];
+    return option.label;
+  };
+
   return (
     <div className="mb-4 mt-3 w-full">
       <label htmlFor={name} className="subText mb-1 block">
@@ -42,33 +55,77 @@ const SelectComponent: FC<InputProps> = ({
         name={name}
         control={control}
         rules={rules}
-        render={({ field, fieldState: { error } }) => (
-          <div>
-            <Select
-              size="small"
-              {...props}
-              {...field}
-              value={field.value || ""}
-              className="w-full rounded bg-white"
-              disabled={disabled}
-            >
-              {options.map((code, index) => (
-                <MenuItem
-                  key={valueKey ? code[valueKey] : index}
-                  value={valueKey ? code[valueKey] : code.value}
-                  className="font-small cursor-pointer"
-                >
-                  {getOptionLabel
-                    ? getOptionLabel(code)
-                    : labelKey
-                    ? code[labelKey]
-                    : code.label}
+        render={({ field, fieldState: { error } }) => {
+          const selectedValue =
+            field.value === undefined || field.value === null
+              ? ""
+              : field.value;
+
+          return (
+            <div>
+              <Select
+                id={name}
+                size="small"
+                displayEmpty
+                {...props}
+                name={field.name}
+                value={selectedValue}
+                onBlur={field.onBlur}
+                inputRef={field.ref}
+                onChange={(event) => field.onChange(event.target.value)}
+                className="w-full rounded bg-white"
+                disabled={disabled}
+                MenuProps={{
+                  disableScrollLock: true,
+                  sx: { zIndex: 1500 },
+                  PaperProps: {
+                    style: { maxHeight: 320 },
+                  },
+                }}
+                renderValue={(value) => {
+                  if (value === "" || value === undefined || value === null) {
+                    return (
+                      <span className="text-sm text-[#94A3B8]">
+                        Select {label.toLowerCase()}
+                      </span>
+                    );
+                  }
+
+                  const match = options.find(
+                    (option, index) =>
+                      String(getOptionValue(option, index)) === String(value),
+                  );
+
+                  return match ? getOptionText(match) : String(value);
+                }}
+              >
+                <MenuItem disabled value="">
+                  <em>Select {label.toLowerCase()}</em>
                 </MenuItem>
-              ))}
-            </Select>
-            {error && <p className="text-sm text-red-500">{error.message}</p>}
-          </div>
-        )}
+                {options.map((code, index) => {
+                  const optionValue = getOptionValue(code, index);
+                  return (
+                    <MenuItem
+                      key={String(optionValue)}
+                      value={optionValue}
+                      className="font-small cursor-pointer"
+                    >
+                      {getOptionText(code)}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+              {error && (
+                <p className="text-sm text-red-500">{error.message}</p>
+              )}
+              {!disabled && options.length === 0 && (
+                <p className="mt-1 text-xs text-[#94A3B8]">
+                  No options available
+                </p>
+              )}
+            </div>
+          );
+        }}
       />
     </div>
   );

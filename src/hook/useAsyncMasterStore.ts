@@ -54,12 +54,22 @@ const useAsyncMasterStore = (key: keyof masterStoreType): [any[], boolean] => {
   const [isLoading, setLoading] = useState(!state.updatedWithApi);
 
   useEffect(() => {
-    if (!state.updatedWithApi) {
+    const shouldFetch =
+      !state.updatedWithApi || (Array.isArray(state.data) && state.data.length === 0);
+
+    if (shouldFetch) {
       void (async () => {
         const [res] = await apiFunctions[key]();
 
         if (res?.body) {
-          const data: genericMasterType[] = res.body;
+          const rawBody = res.body;
+          const data: genericMasterType[] = (
+            Array.isArray(rawBody) ? rawBody : [rawBody]
+          ).map((item) =>
+            item && typeof item === "object" && "dataValues" in item
+              ? (item as { dataValues: genericMasterType }).dataValues
+              : item,
+          );
 
           switch (key) {
             case "countries":

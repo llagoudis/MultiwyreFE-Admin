@@ -16,7 +16,7 @@ const HeaderLayout = ({
   onChange = () => null,
 }: propType) => {
   return (
-    <div className="w-full max-w-full min-w-0 overflow-hidden border border-slate-200 ">
+    <div className="w-full max-w-full min-w-0 border border-slate-200 ">
       <div className="flex justify-between bg-[#E2E8F080] px-3 py-4">
         <h2 className="subHeader">{name}</h2>
 
