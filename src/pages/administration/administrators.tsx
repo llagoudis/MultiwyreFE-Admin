@@ -20,9 +20,11 @@ import { ApiHandler } from "~/service/UtilService";
 import {
   deleteAdminUser,
   fetchAdministrators,
+  updateAdminUser,
 } from "~/service/api/administrator";
 import toast from "react-hot-toast";
 import { enforcePermission } from "~/utils/permissions";
+import localStorageService from "~/service/LocalstorageService";
 
 export interface currencyType {
   id: number;
@@ -43,6 +45,7 @@ const filters: filterType[] = [
   { label: "Last name", name: "last_name" },
   { label: "Email", name: "email" },
   { label: "Role", name: "role" },
+  { label: "Status", name: "status" },
   { label: "Two Factor Auth", name: "two_factor_auth" },
 ];
 
@@ -59,6 +62,7 @@ const Administrators = () => {
     "last_name",
     "email",
     "role",
+    "status",
     "two_factor_auth",
   ]);
 
@@ -124,6 +128,44 @@ const Administrators = () => {
     }
   };
 
+  const handleToggleAdminActive = async (
+    row: AdministratorUsersType,
+    active: boolean,
+  ) => {
+    const auth = localStorageService.decodeAuthBody() as AuthBody | undefined;
+    if (auth?.azureId && row.azureId && auth.azureId === row.azureId && !active) {
+      toast.error("You cannot suspend your own account");
+      return;
+    }
+
+    const [response, err] = await updateAdminUser({
+      azureId: row.azureId ?? "",
+      firstname: row.firstname,
+      lastname: row.lastname,
+      email: row.email,
+      roles: row.accessRoles.id,
+      active,
+    });
+
+    if (err) {
+      toast.error(
+        active
+          ? "Failed to enable admin user"
+          : "Failed to suspend admin user",
+      );
+      return;
+    }
+
+    if (response?.success) {
+      toast.success(
+        active
+          ? "Administrator enabled successfully"
+          : "Administrator suspended successfully",
+      );
+      void getAdminUsers();
+    }
+  };
+
   // columns
   const columns = [
     {
@@ -170,6 +212,23 @@ const Administrators = () => {
 
     {
       flex: 1,
+      minWidth: 120,
+      field: "active",
+      headerName: "STATUS",
+      valueGetter: ({ row }: TableRow) => (row.active ? "Active" : "Suspended"),
+      renderCell: ({ row }: TableRow) => (
+        <span
+          className={`font-semibold ${
+            row.active ? "text-green-700" : "text-red-600"
+          }`}
+        >
+          {row.active ? "Active" : "Suspended"}
+        </span>
+      ),
+    },
+
+    {
+      flex: 1,
       minWidth: 150,
       field: "twoFactorStatus",
       headerName: "TWO FACTOR AUTH",
@@ -191,21 +250,6 @@ const Administrators = () => {
       width: 100,
       headerName: "ACTIONS",
       getActions: ({ row }: TableRow) => [
-        // <GridActionsCellItem
-        //   key="Show"
-        //   onClick={() => {
-        //     handleNavigate("/banking/companies/accDetails");
-        //   }}
-        //   label="Show"
-        //   showInMenu
-        //   sx={{
-        //     margin: "0 1rem",
-        //     padding: "5px 0",
-        //     borderBottom: "1px solid #cdcdcd",
-        //     width: "6rem",
-        //     fontSize: "14px",
-        //   }}
-        // />,
         <GridActionsCellItem
           key="edit"
           onClick={() => {
@@ -223,6 +267,23 @@ const Administrators = () => {
             ]);
           }}
           label="Edit"
+          showInMenu
+          sx={{
+            margin: "0 1rem",
+            padding: "5px 0",
+            borderBottom: "1px solid #cdcdcd",
+            width: "6rem",
+            fontSize: "14px",
+          }}
+        />,
+        <GridActionsCellItem
+          key={row.active ? "suspend" : "enable"}
+          onClick={() => {
+            enforcePermission("super-edit", [
+              () => void handleToggleAdminActive(row, !row.active),
+            ]);
+          }}
+          label={row.active ? "Suspend" : "Enable"}
           showInMenu
           sx={{
             margin: "0 1rem",
