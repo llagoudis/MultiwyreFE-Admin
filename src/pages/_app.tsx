@@ -11,7 +11,12 @@ import toast, { Toaster } from "react-hot-toast";
 import dynamic from "next/dynamic";
 import { roleRestrictions } from "~/utils/permissions";
 
-const GUEST_ROUTES = new Set(["/auth/signup", "/auth/login"]);
+const GUEST_ROUTES = new Set([
+  "/auth/signup",
+  "/auth/login",
+  "/auth/forgotPassword",
+  "/auth/resetPassword",
+]);
 const TWO_FA_ROUTES = new Set(["/auth/setup-2fa", "/auth/verify-2fa"]);
 
 const MyApp: AppType = ({ Component, pageProps }) => {

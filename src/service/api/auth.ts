@@ -69,3 +69,26 @@ export const saveAdminPreAuthSession = (
   sessionStorage.setItem("preAuthToken", preAuthToken);
   sessionStorage.setItem("requires2FASetup", String(requires2FASetup));
 };
+
+export const forgotAdminPassword = (email: string) =>
+  ApiHandler(() =>
+    axios.post(
+      `${baseURL}/forgotPassword/admin/forgot-password`,
+      encryptPayload({ email }),
+      { headers: { "Content-Type": "application/json" } },
+    ),
+  );
+
+export const resetAdminPassword = (data: {
+  id: string | number;
+  token: string;
+  newPassword: string;
+  confirmPassword: string;
+}) =>
+  ApiHandler(() =>
+    axios.post(
+      `${baseURL}/forgotPassword/admin/reset-password`,
+      encryptPayload(data),
+      { headers: { "Content-Type": "application/json" } },
+    ),
+  );

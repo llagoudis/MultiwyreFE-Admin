@@ -1,7 +1,7 @@
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import Router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import React, { Fragment, useContext, useEffect, useState } from "react";
 import { RiCloseCircleLine } from "react-icons/ri";
 import arrowdown from "~/assets/general/arrow_down.svg";
@@ -16,8 +16,8 @@ import processingIcon from "~/assets/sidebaricons/processing.svg";
 import adminprofile from "~/assets/sidebaricons/profile.svg";
 import reports from "~/assets/sidebaricons/reports.svg";
 import { SidebarContext } from "~/context/SidebarProvider";
-import localStorageService from "~/service/LocalstorageService";
 import { useAuthStore, useGlobalStore } from "~/store";
+import { logoutAdmin } from "~/utils/logout";
 
 export type ImageType = StaticImageData;
 
@@ -483,8 +483,7 @@ const Sidebar: React.FC = () => {
             <div
               className="group flex cursor-pointer items-center  gap-5 px-3"
               onClick={() => {
-                localStorageService.clearStorage();
-                void Router.replace("/auth/login");
+                logoutAdmin();
               }}
             >
               <Image
@@ -578,8 +577,7 @@ const Sidebar: React.FC = () => {
             <div
               className="group flex cursor-pointer items-center  gap-5 px-3"
               onClick={() => {
-                localStorageService.clearStorage();
-                void Router.replace("/auth/login");
+                logoutAdmin();
               }}
             >
               <Image

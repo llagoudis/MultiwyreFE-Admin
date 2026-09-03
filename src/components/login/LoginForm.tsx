@@ -131,6 +131,20 @@ const LoginForm: React.FC = () => {
                     type={"password"}
                   />
                 </div>
+                <div className="mb-2">
+                  <button
+                    type="button"
+                    className="text-sm font-semibold text-blue-600 hover:underline"
+                    onClick={() =>
+                      void router.push({
+                        pathname: "/auth/forgotPassword",
+                        query: email ? { email } : undefined,
+                      })
+                    }
+                  >
+                    Forgot password?
+                  </button>
+                </div>
               </Fragment>
             )}
             <div className="mt-20 flex">

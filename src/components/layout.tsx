@@ -15,6 +15,8 @@ const routesArray = [
   "/auth/signup",
   "/auth/setup-2fa",
   "/auth/verify-2fa",
+  "/auth/forgotPassword",
+  "/auth/resetPassword",
 ];
 
 const Layout = ({ children }: Props) => {

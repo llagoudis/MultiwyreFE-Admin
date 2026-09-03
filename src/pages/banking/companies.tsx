@@ -109,6 +109,14 @@ const Companies = () => {
 
     setTableLoading(false);
     if (error) {
+      if (
+        typeof error === "string" &&
+        error.toLowerCase().includes("not logged in")
+      ) {
+        setCompanies([]);
+        setPageCount(0);
+        return;
+      }
       toast.error(
         typeof error === "string" ? error : "Failed to load companies",
       );
