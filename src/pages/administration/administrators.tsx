@@ -143,7 +143,7 @@ const Administrators = () => {
       firstname: row.firstname,
       lastname: row.lastname,
       email: row.email,
-      roles: row.accessRoles.id,
+      roles: Number(row.accessRoles.id),
       active,
     });
 
