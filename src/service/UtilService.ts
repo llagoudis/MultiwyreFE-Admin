@@ -3,6 +3,7 @@ import ErrorResponse from "./ErrorResponse";
 import axios from "axios";
 import localStorageService from "./LocalstorageService";
 import { decryptResponse } from "~/common/functions";
+import { isLoggingOut, isUnauthorizedError } from "~/utils/logout";
 
 const ApiHandler = async <T>(
   promise: (data?: any) => Promise<{ data: APIResponse<T> }>,
@@ -15,7 +16,9 @@ const ApiHandler = async <T>(
     return [res, null];
   } catch (error) {
     const message = ErrorResponse(error);
-    toast.error(message);
+    if (!isLoggingOut() && !isUnauthorizedError(error)) {
+      toast.error(message);
+    }
     return [null, message];
   }
 };
