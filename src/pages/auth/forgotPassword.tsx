@@ -41,8 +41,10 @@ const ForgotPasswordPage = () => {
       resetLink?: string;
       emailSent?: boolean;
     };
-    const link = typeof body.resetLink === "string" ? body.resetLink : "";
-    const sent = body.emailSent === true;
+    // Only show on-screen link when BE explicitly says email was NOT sent (local QA).
+    const sent = body.emailSent !== false;
+    const link =
+      !sent && typeof body.resetLink === "string" ? body.resetLink : "";
 
     setResetLink(link);
     setEmailSent(sent);
