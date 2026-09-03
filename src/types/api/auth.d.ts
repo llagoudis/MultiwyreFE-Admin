@@ -23,10 +23,11 @@ interface AdministratorUser {
   firstname: string;
   lastname: string;
   email: string;
-  password: string;
+  password?: string;
   roles: number;
-  reEnterPassword: string;
+  reEnterPassword?: string;
   azureId?: string;
+  active?: boolean;
 }
 
 interface AdminBeneficiaryDetails {
