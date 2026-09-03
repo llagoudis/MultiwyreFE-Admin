@@ -37,9 +37,12 @@ const ForgotPasswordPage = () => {
 
     if (error) return;
 
-    const link =
-      typeof data?.body?.resetLink === "string" ? data.body.resetLink : "";
-    const sent = data?.body?.emailSent === true;
+    const body = (data?.body ?? {}) as {
+      resetLink?: string;
+      emailSent?: boolean;
+    };
+    const link = typeof body.resetLink === "string" ? body.resetLink : "";
+    const sent = body.emailSent === true;
 
     setResetLink(link);
     setEmailSent(sent);
