@@ -39,7 +39,7 @@ const CreateAdministrator = () => {
   const router = useRouter();
   const userId = router.query?.azureId as string;
 
-  const [accessRoles] = useAsyncMasterStore("accessRoles");
+  const [accessRoles, accessRolesLoading] = useAsyncMasterStore("accessRoles");
   const [loading, setLoading] = useState<boolean>(false);
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [show2FA, setShow2FA] = useState<boolean>(false);
@@ -207,6 +207,7 @@ const CreateAdministrator = () => {
               label="Role"
               required={true}
               name="roles"
+              disabled={accessRolesLoading}
               rules={{ required: "Role is required" }}
             />
 

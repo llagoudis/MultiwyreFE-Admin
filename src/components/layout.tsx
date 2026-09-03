@@ -1,16 +1,9 @@
 import Head from "next/head";
-import {
-  useContext,
-  type ReactNode,
-  Suspense,
-  useState,
-  useEffect,
-} from "react";
+import { useContext, type ReactNode, Suspense } from "react";
 import Sidebar from "~/common/Sidebar";
 import Topbar from "~/common/Topbar";
 import { SidebarContext } from "~/context/SidebarProvider";
-import { usePathname } from "next/navigation";
-import { ApiHandler } from "~/service/UtilService";
+import { useRouter } from "next/router";
 import { useGlobalStore } from "~/store";
 
 type Props = {
@@ -25,9 +18,8 @@ const routesArray = [
 ];
 
 const Layout = ({ children }: Props) => {
-  const [tabName, setTabName] = useState<string>("CRM Admin");
-
-  const pathName = usePathname();
+  const router = useRouter();
+  const pathName = router.pathname;
 
   const sidebarprop = useContext(SidebarContext);
 

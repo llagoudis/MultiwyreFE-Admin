@@ -11,14 +11,7 @@ import toast, { Toaster } from "react-hot-toast";
 import dynamic from "next/dynamic";
 import { roleRestrictions } from "~/utils/permissions";
 
-const AUTH_ROUTES = new Set([
-  "/",
-  "/auth/signup",
-  "/auth/login",
-  "/auth/setup-2fa",
-  "/auth/verify-2fa",
-]);
-
+const GUEST_ROUTES = new Set(["/auth/signup", "/auth/login"]);
 const TWO_FA_ROUTES = new Set(["/auth/setup-2fa", "/auth/verify-2fa"]);
 
 const MyApp: AppType = ({ Component, pageProps }) => {
@@ -29,17 +22,11 @@ const MyApp: AppType = ({ Component, pageProps }) => {
     if (!router.isReady) return;
 
     const path = router.pathname;
-    const isAuthRoute = AUTH_ROUTES.has(path);
-    const is2FAFlow = TWO_FA_ROUTES.has(path);
     const preAuthToken = sessionStorage.getItem("preAuthToken");
+    const isPublicRoute = GUEST_ROUTES.has(path) || TWO_FA_ROUTES.has(path);
 
-    if (token && isAuthRoute && !is2FAFlow) {
+    if (token && GUEST_ROUTES.has(path)) {
       void router.replace("/");
-      return;
-    }
-
-    if (!token && !preAuthToken && !isAuthRoute) {
-      void router.replace("/auth/login");
       return;
     }
 
@@ -49,10 +36,15 @@ const MyApp: AppType = ({ Component, pageProps }) => {
         void router.replace(setup ? "/auth/setup-2fa" : "/auth/verify-2fa");
         return;
       }
-      if (!isAuthRoute) {
+      if (!isPublicRoute) {
         void router.replace("/auth/login");
         return;
       }
+    }
+
+    if (!token && !preAuthToken && !isPublicRoute) {
+      void router.replace("/auth/login");
+      return;
     }
 
     void getUserIp();
