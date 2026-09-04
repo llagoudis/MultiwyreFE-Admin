@@ -17,7 +17,6 @@ import { fetchAdminLogs } from "~/service/ApiRequests";
 import {
   Debounce,
   ExportCsv,
-  formatDate,
   formatDateTime,
 } from "~/common/functions";
 import {
@@ -107,7 +106,7 @@ const ActivityLog = () => {
       headerName: "CREATED AT",
       valueGetter: (params: { row: any }) => new Date(params.row.createdAt),
       renderCell: ({ row }: TableRow) => (
-        <p>{formatDate(row?.createdAt) ?? "---"}</p>
+        <p>{formatDateTime(row?.createdAt) ?? "---"}</p>
       ),
     },
     {
@@ -121,15 +120,18 @@ const ActivityLog = () => {
         }`}</p>
       ),
     },
-    // {
-    //   flex: 1,
-    //   minWidth: 120,
-    //   field: "user",
-    //   headerName: "USER",
-    //   renderCell: ({ row }: TableRow) => (
-    //     <p>{`${row?.User?.firstname || ""} ${row?.User?.lastname || ""}`}</p>
-    //   ),
-    // },
+    {
+      flex: 1,
+      minWidth: 120,
+      field: "user",
+      headerName: "TARGET",
+      renderCell: ({ row }: TableRow) => {
+        const name = `${row?.User?.firstname || ""} ${
+          row?.User?.lastname || ""
+        }`.trim();
+        return <p>{name || "—"}</p>;
+      },
+    },
 
     {
       flex: 1,
@@ -182,10 +184,13 @@ const ActivityLog = () => {
 
     res?.body?.data?.map((row) => {
       reportHeaderval.push({
-        "CREATED AT": formatDate(row?.createdAt),
+        "CREATED AT": formatDateTime(row?.createdAt),
         ADMINISTRATOR: `${row?.AdminUser?.firstname || ""} ${
           row?.AdminUser?.lastname || ""
         }`,
+        TARGET: `${row?.User?.firstname || ""} ${
+          row?.User?.lastname || ""
+        }`.trim(),
         DESCRIPTION: row.message,
         ACTION: row.type,
       });
