@@ -342,23 +342,23 @@ const Sidebar: React.FC = () => {
     return pathName === path || pathName.startsWith(`${path}/`);
   };
 
-  const isSectionHighlighted = (
-    name: string | undefined,
+  const isSectionRouteActive = (
+    path: string | undefined,
     subitems?: subitemsType[],
   ) => {
-    if (heading === name) return true;
+    if (path && path !== "/" && isRouteActive(path)) return true;
     return Boolean(subitems?.some((sub) => isRouteActive(sub.path)));
   };
 
   const SidebarItem = ({ name, path, icon, menu, subitems }: Route) => {
-    const highlighted =
-      isSectionHighlighted(name, subitems) ||
-      (path !== "/" && isRouteActive(path));
+    const isOpen = heading === name;
+    // Only mark active from the current route — not merely because the section is expanded
+    const highlighted = isSectionRouteActive(path, subitems);
 
     return (
       <Link
         href={path ? path : pathName}
-        className={`sidebar-item${highlighted ? " active" : ""} flex cursor-pointer justify-between p-1 px-2`}
+        className={`sidebar-item${highlighted ? " active" : ""}${isOpen ? " is-open" : ""} flex min-h-[40px] shrink-0 cursor-pointer items-center justify-between p-1 px-2`}
         onClick={(e) => {
           if (subitems?.length) {
             e.preventDefault();
@@ -379,7 +379,7 @@ const Sidebar: React.FC = () => {
         {menu && (
           <Image
             src={arrowdown as ImageType}
-            className={`sidebar-chevron${highlighted ? " is-open" : ""}`}
+            className={`sidebar-chevron${isOpen ? " is-open" : ""}`}
             alt=""
           />
         )}
@@ -424,15 +424,69 @@ const Sidebar: React.FC = () => {
     setHeading(activeSection?.name ?? "");
   }, [pathName]);
 
+  const renderNavRoutes = () =>
+    routes.map((item, i) => (
+      <div key={i} className="shrink-0">
+        <SidebarItem {...item} />
+
+        <ul
+          className={`${
+            heading === item.name ? "mt-1 block pl-5" : "hidden"
+          } ml-3 border-[#2D2F39]`}
+        >
+          {item.subitems?.map((subitem, j) => (
+            <li
+              key={j}
+              className="relative py-0.5 before:absolute before:-left-5 before:top-0 before:h-full before:w-4 before:rounded-bl-xl before:border-b-2 before:border-l-2 before:border-[#2D2F39] before:content-['']"
+            >
+              <SidebarNestedItem {...subitem} />
+            </li>
+          ))}
+        </ul>
+      </div>
+    ));
+
+  const renderFooter = (hidden?: boolean) => (
+    <div className={`${hidden ? "hidden" : ""} shrink-0 border-t border-black/5 bg-white pb-2 pt-2`}>
+      <div
+        className="group flex cursor-pointer items-center gap-5 px-3"
+        onClick={() => {
+          logoutAdmin();
+        }}
+      >
+        <Image
+          src={logout as StaticImageData}
+          alt=""
+          className="group-hover:brightness-200"
+        />
+        <h1 className="p-1 text-[#8B8D91]">Logout</h1>
+      </div>
+      <div className="flex items-center gap-2 px-3">
+        <Image
+          src={adminprofile as StaticImageData}
+          alt=""
+          className="h-8 w-auto"
+        />
+
+        <div className="break-words text-xs text-[#8B8D91]">
+          <p suppressHydrationWarning>
+            {firstname ? firstname : " "} {lastname ? lastname : " "}
+          </p>
+          <p suppressHydrationWarning>{email ? email : " "}</p>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <Fragment>
       <nav
         className={`${
           !sidebarprop?.open ? " w-60" : "w-full md:w-0"
-        } hidden h-screen  border-r bg-black  duration-500 md:block sidebar-container`}
+        } hidden h-screen overflow-hidden border-r bg-black duration-500 md:block sidebar-container`}
       >
-        <div className="flex min-h-screen flex-col justify-between">
-          <div className="h-16 w-100 bg-[#4775F2]">
+        <div className="flex h-full min-h-0 flex-col">
+          <div className="h-16 w-full shrink-0 bg-[#4775F2]">
             {admin?.profileImgLink && (
               <div className="logo relative flex h-16 items-center justify-center">
                 <Image
@@ -448,166 +502,55 @@ const Sidebar: React.FC = () => {
                 />
               </div>
             )}
-
-            <div
-              className={`flex flex-col justify-center gap-3 px-3 p-4 capitalize ${
-                sidebarprop?.open && "opacity-0"
-              }`}
-            >
-              {routes.map((item, i) => (
-                <div key={i}>
-                  <SidebarItem {...item} />
-
-                  <ul
-                    className={`${
-                      heading === item.name ? "block pl-5" : "hidden"
-                    }  ${
-                      item.subitems && heading === item.name && "mt-6"
-                    }    ml-3 border-[#2D2F39] `}
-                  >
-                    {item.subitems?.map((subitem, j) => (
-                      <li
-                        key={j}
-                        className="relative py-[1px]  before:absolute before:-left-5 before:-top-6 before:h-[50px] before:w-4 before:rounded-bl-xl before:border-b-2  before:border-l-2 before:border-[#2D2F39]  before:content-['']"
-                      >
-                        <SidebarNestedItem {...subitem} />
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
           </div>
 
-          <div className={`${sidebarprop?.open && "hidden"}  pb-2`}>
-            <div
-              className="group flex cursor-pointer items-center  gap-5 px-3"
-              onClick={() => {
-                logoutAdmin();
-              }}
-            >
-              <Image
-                src={logout as StaticImageData}
-                alt=""
-                className="group-hover:brightness-200"
-              />
-              <h1
-                className={`p-1 text-[#8B8D91] 
-          `}
-              >
-                Logout
-              </h1>
-            </div>
-            <div className="flex items-center gap-2 px-3">
-              <Image
-                src={adminprofile as StaticImageData}
-                alt=""
-                className="h-8 w-auto"
-              />
-
-              <div className="break-words text-xs  text-[#8B8D91]">
-                <p suppressHydrationWarning>
-                  {firstname ? firstname : " "} {lastname ? lastname : " "}
-                </p>
-                <p suppressHydrationWarning>{email ? email : " "} </p>
-              </div>
-            </div>
+          <div
+            className={`min-h-0 flex-1 overflow-y-auto px-3 py-4 capitalize ${
+              sidebarprop?.open && "opacity-0"
+            }`}
+          >
+            <div className="flex flex-col gap-2">{renderNavRoutes()}</div>
           </div>
+
+          {renderFooter(sidebarprop?.open)}
         </div>
       </nav>
       <nav
-        className={`fixed h-full  w-1/2 bg-black lg:w-[35vw] ${
+        className={`fixed inset-y-0 z-50 flex h-full w-1/2 flex-col overflow-hidden bg-black p-1 duration-500 lg:w-[35vw] md:hidden mobile-sidebar ${
           sidebarprop?.open ? "left-0" : "-left-full"
-        } top-0 z-50 block p-1 duration-500 md:hidden mobile-sidebar`}
+        }`}
       >
-        <div className="logo relative flex h-[15vh] justify-end p-5 ">
+        <div className="logo relative flex shrink-0 justify-end p-5">
           <RiCloseCircleLine
             onClick={sidebarprop?.handleSidebar}
             className="h-5 w-5 cursor-pointer"
           />
         </div>
-        <div className="flex flex-col gap-5">
-          {sidebarprop?.open && admin && (
-            <div className="logo relative flex h-[10vh] items-center justify-center ">
-              <Image
-                alt={"Profile"}
-                className="h-auto w-[100px] object-cover"
-                src={
-                  admin?.profileImgLink
-                    ? `${admin?.profileImgLink}?t=${new Date().getTime()}`
-                    : ""
-                }
-                width={"150"}
-                height={"150"}
-              />
-            </div>
-          )}
-
-          <div
-            className={`flex flex-col justify-center gap-3 px-3 capitalize ${
-              !sidebarprop?.open && "opacity-0"
-            }`}
-          >
-            {routes.map((item, i) => (
-              <div key={i}>
-                <SidebarItem {...item} />
-
-                <ul
-                  className={`${
-                    heading === item.name ? "block pl-5" : "hidden"
-                  }  ${
-                    item.subitems && heading === item.name && "mt-6"
-                  }    ml-3 border-[#2D2F39] `}
-                >
-                  {item.subitems?.map((subitem, j) => (
-                    <li
-                      key={j}
-                      className="relative py-[1px]  before:absolute before:-left-5 before:-top-6 before:h-[50px] before:w-4 before:rounded-bl-xl before:border-b-2  before:border-l-2 before:border-[#2D2F39]  before:content-['']"
-                    >
-                      <SidebarNestedItem {...subitem} />
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+        {sidebarprop?.open && admin && (
+          <div className="logo relative flex h-16 shrink-0 items-center justify-center">
+            <Image
+              alt={"Profile"}
+              className="h-auto w-[100px] object-cover"
+              src={
+                admin?.profileImgLink
+                  ? `${admin?.profileImgLink}?t=${new Date().getTime()}`
+                  : ""
+              }
+              width={"150"}
+              height={"150"}
+            />
           </div>
-        </div>
-        <div className="absolute bottom-6 mt-5 flex flex-col justify-center gap-7 pl-6 capitalize">
-          <div className={`${!sidebarprop?.open && "hidden"}  pb-2`}>
-            <div
-              className="group flex cursor-pointer items-center  gap-5 px-3"
-              onClick={() => {
-                logoutAdmin();
-              }}
-            >
-              <Image
-                src={logout as StaticImageData}
-                alt=""
-                className="group-hover:brightness-200"
-              />
-              <h1
-                className={`p-1 text-[#8B8D91] 
-          `}
-              >
-                Logout
-              </h1>
-            </div>
-            <div className="flex items-center gap-3 px-3">
-              <Image
-                src={adminprofile as StaticImageData}
-                alt=""
-                className="h-8 w-auto"
-              />
+        )}
 
-              <div className="break-words text-xs  text-[#8B8D91]">
-                <p suppressHydrationWarning>
-                  {firstname ? firstname : " "} {lastname ? lastname : " "}
-                </p>
-                <p suppressHydrationWarning>{email ? email : " "} </p>
-              </div>
-            </div>
-          </div>
+        <div
+          className={`min-h-0 flex-1 overflow-y-auto px-3 capitalize ${
+            !sidebarprop?.open && "opacity-0"
+          }`}
+        >
+          <div className="flex flex-col gap-2 py-2">{renderNavRoutes()}</div>
         </div>
+
+        {renderFooter(!sidebarprop?.open)}
       </nav>
     </Fragment>
   );
