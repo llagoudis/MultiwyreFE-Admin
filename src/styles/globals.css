@@ -166,6 +166,14 @@ button[aria-selected="true"] {
   color: #000000 !important;
   border-radius: 10px;
   transition: all 200ms ease-in-out;
+  min-height: 40px;
+  flex-shrink: 0;
+  align-items: center;
+}
+
+/* Expanded section header — chevron state only; do not stretch like .active */
+.sidebar-item.is-open:not(.active) {
+  background: transparent;
 }
 
 /* Hover and active state for sidebar items */
