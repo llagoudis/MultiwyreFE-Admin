@@ -173,9 +173,9 @@ const Account = () => {
       flex: 1,
       minWidth: 100,
       field: "Provider_name",
-      valueGetter: (params: { row: any }) => "Fireblocks",
+      valueGetter: (params: { row: any }) => "On-chain",
       headerName: "PROVIDER NAME",
-      renderCell: () => <span>Fireblocks</span>,
+      renderCell: () => <span>On-chain</span>,
     },
 
     {

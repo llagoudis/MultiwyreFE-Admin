@@ -125,7 +125,7 @@ const AllTransactions = () => {
         const amount = parseFloat(TransactionFee?.amount ?? 0);
         const feeType = OperationType?.displayName ?? "";
         const direction = OperationType?.displayName ?? "";
-        const provider = operation === "EXCHANGE" ? "KRAKEN" : "FIREBLOCKS";
+        const provider = operation === "EXCHANGE" ? "KRAKEN" : "On-chain";
         const fees = TransactionFee?.feeValue
           ? parseFloat(TransactionFee?.feeValue ?? 0)
           : 0;

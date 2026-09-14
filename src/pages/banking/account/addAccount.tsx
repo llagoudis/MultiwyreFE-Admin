@@ -48,7 +48,7 @@ const AddAccount = () => {
 
   const onSubmit = async (values: formData) => {
     if (values.provider !== "15") {
-      toast.error("Only Fireblocks provider is available");
+      toast.error("Only On-chain provider is available");
     } else {
       setLoading(true);
       const [data, error] = await addUserAccount(values);

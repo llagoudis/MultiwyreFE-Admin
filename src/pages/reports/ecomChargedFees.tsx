@@ -137,7 +137,7 @@ const AllTransactions = () => {
       //   const feeType = OperationType?.displayName ?? "";
       //   const direction = OperationType?.displayName ?? "";
       //   const provider =
-      //     transactiontype === "EXCHANGE" ? "KRAKEN" : "xchange-360";
+      //     transactiontype === "EXCHANGE" ? "KRAKEN" : "Multiwyre";
       //   const fees = fee ? parseFloat(fee ?? 0) : 0;
 
       // // Check if assetId already exists in the array
