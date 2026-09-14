@@ -28,7 +28,7 @@ const providerList = [
   { label: "Local Manual CHAPS", value: 11 },
   { label: "Local Manual BACS", value: 12 },
   { label: "Target 2", value: 13 },
-  { label: "Fireblocks", value: 14 },
+  { label: "On-chain", value: 14 },
   { label: "Wallet", value: 15 },
   { label: "Crypto", value: 16 },
   { label: "Intercash", value: 17 },
@@ -51,7 +51,7 @@ const AddLimits = () => {
 
   const onSubmit = async (values: any) => {
     if (values.providerId !== 14) {
-      toast.error("Only Fireblocks provider is available");
+      toast.error("Only On-chain provider is available");
     } else {
       const requestBody = { ...values, status: values.status === "Active" };
       setLoading(true);

@@ -364,7 +364,7 @@ const calculatePaymentType = ({ row }: TableRow) => {
     return row?.EuroTransaction?.paymentSystemType;
     //
   } else {
-    return "FIREBLOCKS";
+    return "On-chain";
   }
 };
 

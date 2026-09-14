@@ -87,9 +87,9 @@ const Limits = () => {
     //   minWidth: 200,
     //   field: "provider",
     //   headerName: "PROVIDER",
-    //   valueGetter: () => "Fireblocks",
+    //   valueGetter: () => "On-chain",
     //   flex: 1,
-    //   renderCell: () => <span>Fireblocks</span>,
+    //   renderCell: () => <span>On-chain</span>,
     // },
     // {
     //   flex: 1,

@@ -12,7 +12,8 @@ import profile from "~/assets/navicons/profile.svg";
 import admin from "~/assets/sidebaricons/admin.svg";
 import banking from "~/assets/sidebaricons/banking.svg";
 import logout from "~/assets/sidebaricons/logout.svg";
-import processingIcon from "~/assets/sidebaricons/processing.svg";
+// Point 3 — Processing nav dormant; icon unused while section commented out
+// import processingIcon from "~/assets/sidebaricons/processing.svg";
 import adminprofile from "~/assets/sidebaricons/profile.svg";
 import reports from "~/assets/sidebaricons/reports.svg";
 import { SidebarContext } from "~/context/SidebarProvider";
@@ -211,35 +212,30 @@ const routes: Route[] = [
       // },
     ],
   },
-  {
-    id: 4,
-    name: "Processing",
-    icon: processingIcon as ImageType,
-    menu: true,
-    subitems: [
-      {
-        name: "Merchants",
-        path: "/processing/merchants",
-        icon: home as ImageType,
-      },
-      {
-        name: "Transactions",
-        path: "/processing/transactions",
-        icon: home as ImageType,
-      },
-
-      {
-        name: "Acquirers",
-        path: "/processing/acquirers",
-        icon: home as ImageType,
-      },
-      // {
-      //   name: "Project balances",
-      //   path: "/processing/projectBalances",
-      //   icon: home as ImageType,
-      // },
-    ],
-  },
+  // Point 3 — Stripe Processing dormant (not on near-term roadmap)
+  // {
+  //   id: 4,
+  //   name: "Processing",
+  //   icon: processingIcon as ImageType,
+  //   menu: true,
+  //   subitems: [
+  //     {
+  //       name: "Merchants",
+  //       path: "/processing/merchants",
+  //       icon: home as ImageType,
+  //     },
+  //     {
+  //       name: "Transactions",
+  //       path: "/processing/transactions",
+  //       icon: home as ImageType,
+  //     },
+  //     {
+  //       name: "Acquirers",
+  //       path: "/processing/acquirers",
+  //       icon: home as ImageType,
+  //     },
+  //   ],
+  // },
 
   {
     id: 5,
@@ -257,11 +253,12 @@ const routes: Route[] = [
         path: "/reports/allTransactions",
         icon: reports as ImageType,
       },
-      {
-        name: "Processing",
-        path: "/reports/processingTurnover",
-        icon: reports as ImageType,
-      },
+      // Point 3 — Stripe Processing report dormant (not on near-term roadmap)
+      // {
+      //   name: "Processing",
+      //   path: "/reports/processingTurnover",
+      //   icon: reports as ImageType,
+      // },
     ],
   },
   {

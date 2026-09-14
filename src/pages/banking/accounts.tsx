@@ -296,7 +296,7 @@ const Accounts = () => {
         TYPE: row?.assetId === "EUR" ? "Standard" : "Crypto",
         "PROVIDER CURRENCY": row?.Asset?.name,
         STATUS: row?.User?.active,
-        "PROVIDER NAME": "Fireblocks",
+        "PROVIDER NAME": "On-chain",
       });
     });
 

@@ -623,7 +623,7 @@ export const providerList = [
   { label: "Local Manual CHAPS", value: "12" },
   { label: "Local Manual BACS", value: "13" },
   { label: "Target 2", value: "14" },
-  { label: "Fireblocks", value: "15" },
+  { label: "On-chain", value: "15" },
   { label: "Wallet", value: "16" },
   { label: "Crypto", value: "17" },
   { label: "Intercash", value: "18" },

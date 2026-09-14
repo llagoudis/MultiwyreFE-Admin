@@ -321,7 +321,7 @@ const AccountView = () => {
     },
 
     Provider: {
-      "Provider name": "FIREBLOCKS",
+      "Provider name": "On-chain",
       "Provider currency": account?.assetId ?? "",
       "Provider external ID": "--",
       "Provider number": account?.provider ?? 0,
